@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div style = "text-align:center;">
+	<h1 style="font-size:64px;">כרמל</h1>
+	<img src="temperature.png" alt="Temperature" width="100" height="100">
+	<div id="TEMPERATURE" style="color:red; font-size:48px;"><strong>...</strong></div> 
+	<br>
+	<img src="humidity.png" alt="Humidity" width="100" height="100">
+	<div id="HUMIDITY" style="color:blue; font-size:48px;"><strong>...</strong></div> 
+	<br>
+	<img src="wind.png" alt="Wind" width="100" height="100">
+	<div id="WIND" style="color:gray; font-size:48px;"><strong>...</strong></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script>
+  // Initialize Firebase with your configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyAHs1ZJzRuJDHXHISZws0gScD9JAjyeYkE",
+    authDomain: "",
+    databaseURL: "https://carmel-weather-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "carmel-weather",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: ""
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  // Reference to your Firebase database
+  var database = firebase.database();
+
+  // Function to fetch and display data
+  function fetchData() {
+    var dataRef = database.ref('test'); // Replace with your database path
+    dataRef.once('value').then(function(snapshot) {
+      var data = snapshot.val();
+	  
+      // Update your HTML element with the data
+      document.getElementById('TEMPERATURE').textContent = data.temperature; 
+      document.getElementById('HUMIDITY').textContent    = data.humidity;
+      document.getElementById('WIND').textContent        = data.wind;
+    });
+  }
+
+  // Call the fetchData function to retrieve and display the data
+  fetchData();
+</script>
+</body>
+</html>
