@@ -15,6 +15,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
 <script>
   // Initialize Firebase with your configuration
   var firebaseConfig = {
@@ -33,14 +34,15 @@
 
   // Function to fetch and display data
   function fetchData() {
-    var dataRef = database.ref('test'); // Replace with your database path
+    var dataRef = database.ref('minutely'); // Replace with your database path
     dataRef.once('value').then(function(snapshot) {
-      var data = snapshot.val();
-	  
+      text = snapshot.val();
+      arr  = text.split(";");
+
       // Update your HTML element with the data
-      document.getElementById('TEMPERATURE').textContent = data.temperature; 
-      document.getElementById('HUMIDITY').textContent    = data.humidity;
-      document.getElementById('WIND').textContent        = data.wind;
+      document.getElementById('TEMPERATURE').textContent = arr[0]; 
+      document.getElementById('HUMIDITY').textContent    = arr[1];
+      document.getElementById('WIND').textContent        = arr[2];
     });
   }
 
