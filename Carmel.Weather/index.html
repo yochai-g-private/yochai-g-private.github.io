@@ -2,7 +2,8 @@
 <html>
 <body style="height: 100%">
 <div style = "text-align:center;">
-	<h1 style="font-size:128px;">כרמל</h1>
+	<h1 style="font-size:128px;margin-bottom: 0">כרמל</h1>
+	<h2 style="font-size:64px;margin-top: 0">עכשיו</h2>
 	<img src="temperature.png" alt="Temperature" width="200" height="200">
 	<div id="TEMPERATURE" style="color:red; font-size:48px;"><strong>...</strong></div> 
 	<br>
@@ -11,7 +12,11 @@
 	<br>
 	<img src="wind.png" alt="Wind" width="200" height="200">
 	<div id="WIND" style="color:gray; font-size:48px;"><strong>...</strong></div>
-</div>
+  <div style="display:table;margin: 0px auto;color:gray; font-size:24px;">
+    <p id="W_MIN" style="display:table-cell;"></p>
+    <p style="display:table-cell;"> ... </p>
+    <p id="W_MAX" style="display:table-cell;"></p>
+  </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
@@ -43,6 +48,8 @@
       document.getElementById('TEMPERATURE').textContent = arr[0]; 
       document.getElementById('HUMIDITY').textContent    = arr[1];
       document.getElementById('WIND').textContent        = arr[2];
+      document.getElementById('W_MIN').textContent       = arr[3];
+      document.getElementById('W_MAX').textContent       = arr[4];
     });
   }
 
