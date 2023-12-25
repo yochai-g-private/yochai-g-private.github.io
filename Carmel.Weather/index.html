@@ -2,7 +2,7 @@
 <html>
 <body style="height: 100%">
 <div style = "text-align:center;">
-	<h1 style="font-size:128px;margin-bottom: 0">כרמל</h1>
+  <h1 style="font-size:128px;margin-bottom: 0">כרמל</h1>
 	<h2 style="font-size:64px;margin-top: 0;margin-bottom: 0">עכשיו</h2>
   <div id="UPDATED_AT" style="font-size:16px;margin-top: 0;">wait</div>
   <br>
@@ -20,6 +20,15 @@
     <p id="W_MAX" style="display:table-cell;"></p>
   </div>
 
+  <br><br>
+  <center>
+    <div style="center">
+      <button onclick="window.location.href='Weekly.html'" style="margin:5px;"><font size="+2">שבועי</font></button>
+      <button onclick="window.location.href='Daily.html'"  style="margin:5px;"><font size="+2">יומי</font></button>
+      <button onclick="window.location.href='Hourly.html'" style="margin:5px;"><font size="+2">שעתי</font></button>
+    </div>
+  </center>
+    
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
@@ -49,11 +58,16 @@
   }
 
   function get_trend_char(idx)  {
-    c = trend_text[idx];
-    if(c == 'U')  return up_arrow;
-    if(c == 'D')  return dn_arrow;
+    if(trend_text != null && trend_text == "")
+    {
+      c = trend_text[idx];
+      if(c == 'U')  return up_arrow;
+      if(c == 'D')  return dn_arrow;
+    }
+
     return no_arrow;
   }
+
   // Function to fetch and display data
   function fetchData() {
     if(!database_is_ready)
@@ -64,6 +78,12 @@
       set_values_text(snapshot.val()); 
     });
   
+    if(values_text == null || values_text == "")
+    {
+      document.getElementById('UPDATED_AT').textContent = "NO DATA";
+      return;
+    }
+
     values_arr  = values_text.split(";");
 
     if(values_arr[0] == "...")
