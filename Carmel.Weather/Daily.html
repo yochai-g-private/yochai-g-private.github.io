@@ -34,9 +34,9 @@
   <br><br>
   <br><br><center>
     <div style="center">
-      <button onclick="window.location.href='Weekly.html'" style="margin:15px;"><font size="+80">שבועי</font></button>
-      <button onclick="window.location.href='Hourly.html'" style="margin:15px;"><font size="+80">שעתי</font></button>
-      <button onclick="window.location.href='index.html'" style="margin:15px;"><font size="+80">עכשיו</font></button>
+      <button onclick="window.location.href='Weekly.html'" style="margin:15px;"><font size="120">שבועי</font></button>
+      <button onclick="window.location.href='Hourly.html'" style="margin:15px;"><font size="120">שעתי</font></button>
+      <button onclick="window.location.href='index.html'" style="margin:15px;"><font size="120">עכשיו</font></button>
     </div>
   </center>
     
@@ -46,29 +46,13 @@
 <script>
 
   var database;
-  var database_is_ready = false;
-  var shown_counter = 0;
-
-  const values     = "values";
-  const trend      = "trend";
-  const timestamp  = "timestamp";
   const up_arrow   = "\u2191";
   const dn_arrow   = "\u2193";
   const no_arrow   = " ";
 
   const resolution = "daily/";
 
-  var trend_text = "...";
-  var values_text = "...";
-
-  function set_trend_text(text) { trend_text = text; }
-  function set_values_text(text) { values_text = text; }
-  function set_database_ready() 
-  { 
-    database_is_ready = true; 
-  }
-
-  function get_trend_char(idx)  {
+  function get_trend_char(trend_text, idx)  {
     if(trend_text != null && trend_text != "")
     {
       c = trend_text[idx];
@@ -79,86 +63,59 @@
     return no_arrow;
   }
 
-  // Function to fetch and display data
   function fetchData() {
-    if(!database_is_ready)
-      return;
+    database.ref(resolution).once('value', function(snapshot) {
+        if (!snapshot.exists()) 
+          return;
 
-    dataRef = database.ref(resolution + values);
-    dataRef.once('value').then(function(snapshot) {
-      set_values_text(snapshot.val()); 
-    });
-  
-    if(values_text == null || values_text == "")
-    {
-      document.getElementById('UPDATED_AT').textContent = "NO DATA";
-      return;
-    }
+        val = snapshot.val();
+        timestamp_text = val.timestamp;
 
-    values_arr  = values_text.split(";");
+        if(timestamp_text == null || timestamp_text == "")
+        {
+          document.getElementById('UPDATED_AT').textContent = "NO DATA";
+          document.getElementById('TEMPERATURE').textContent = "-"; 
+          document.getElementById('T_MIN').textContent       = "-";
+          document.getElementById('T_MAX').textContent       = "-";
+          document.getElementById('HUMIDITY').textContent    = "-";
+          document.getElementById('H_MIN').textContent       = "-";
+          document.getElementById('H_MAX').textContent       = "-";
+          document.getElementById('WIND').textContent        = "-";
+          document.getElementById('W_MIN').textContent       = "-";
+          document.getElementById('W_MAX').textContent       = "-";
+          return;
+        }
 
-    if(values_arr[0] == "...")
-      return;
+        last_update = Number(timestamp_text);
+        var date = new Date(last_update);
 
-    shown_counter++;
-    
-    if(shown_counter % 10 != 1)
-      return;
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1; // Months are zero-based
+        const day = date.getDate();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const seconds = date.getSeconds();
 
-    var dataRef = database.ref(resolution + timestamp);
-    dataRef.once('value').then(function(snapshot) {
-      var text = snapshot.val();
-        
-    last_update = Number(text);
-    var date = new Date(last_update);
+        // Create a formatted string
+        const localDateTimeString = `${day}-${month < 10 ? '0' : ''}${month}-${year} ${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1; // Months are zero-based
-    const day = date.getDate();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
+        document.getElementById('UPDATED_AT').textContent = localDateTimeString;
 
-    // Create a formatted string
-    const localDateTimeString = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day} ${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        values_text    = val.values;
+        trend_text     = val.trend;
 
-    document.getElementById('UPDATED_AT').textContent = localDateTimeString;//date.toLocalString().slice(0, 19).replace('T', ' ');
-    });
-    
-    dataRef = database.ref(resolution + trend);
-    dataRef.once('value').then(function(snapshot) {
-      set_trend_text(snapshot.val()); 
-    });
-    
-    // Update your HTML element with the data
-    document.getElementById('TEMPERATURE').textContent = values_arr[0] + get_trend_char(0); 
-    document.getElementById('T_MIN').textContent       = values_arr[1];
-    document.getElementById('T_MAX').textContent       = values_arr[2];
-    document.getElementById('HUMIDITY').textContent    = values_arr[3] + get_trend_char(1);
-    document.getElementById('H_MIN').textContent       = values_arr[4];
-    document.getElementById('H_MAX').textContent       = values_arr[5];
-    document.getElementById('WIND').textContent        = values_arr[6] + get_trend_char(2);
-    document.getElementById('W_MIN').textContent       = values_arr[7];
-    document.getElementById('W_MAX').textContent       = values_arr[8];
-  }
+        values_arr  = values_text.split(";");
 
-  function sleep(ms) {
-    setTimeout(() => { }, ms);
-    //return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  function onDataReady(snapshot) {
-    database_is_ready = true;
-    snapshot.val();
-  }
-
-  function check_database_ready() {
- //   reference = database.ref(resolution + timestamp);
- //   reference.once('value', set_database_ready, (error) => { });
- //   reference = database.ref(resolution + values);
- //   reference.once('value', set_database_ready, (error) => { });
-    reference = database.ref(resolution + trend);
-    reference.once('value', set_database_ready, (error) => { });
+        document.getElementById('TEMPERATURE').textContent = values_arr[0] + get_trend_char(trend_text, 0); 
+        document.getElementById('T_MIN').textContent       = values_arr[1];
+        document.getElementById('T_MAX').textContent       = values_arr[2];
+        document.getElementById('HUMIDITY').textContent    = values_arr[3] + get_trend_char(trend_text, 1);
+        document.getElementById('T_MIN').textContent       = values_arr[4];
+        document.getElementById('T_MAX').textContent       = values_arr[5];
+        document.getElementById('WIND').textContent        = values_arr[6] + get_trend_char(trend_text, 2);
+        document.getElementById('W_MIN').textContent       = values_arr[7];
+        document.getElementById('W_MAX').textContent       = values_arr[8];
+      });
   }
 
   function initialize() {
@@ -176,16 +133,8 @@
     firebase.initializeApp(firebaseConfig);
     database = firebase.database();
 
-    check_database_ready();
-//    do 
-//    {
-      //setTimeout(() => { check_database_ready(); }, 1000);
-//      check_database_ready();
-//    } while (database_is_ready == false);
-
-    
     fetchData();  
-    setInterval(fetchData, 1000);
+    setInterval(fetchData, 10000);
   }
 
   initialize();
