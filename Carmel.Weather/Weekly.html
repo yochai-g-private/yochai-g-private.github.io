@@ -63,26 +63,33 @@
     return no_arrow;
   }
 
+  function no_data() {
+    document.getElementById('UPDATED_AT').textContent = "NO DATA";
+    document.getElementById('TEMPERATURE').textContent = "-"; 
+    document.getElementById('T_MIN').textContent       = "-";
+    document.getElementById('T_MAX').textContent       = "-";
+    document.getElementById('HUMIDITY').textContent    = "-";
+    document.getElementById('H_MIN').textContent       = "-";
+    document.getElementById('H_MAX').textContent       = "-";
+    document.getElementById('WIND').textContent        = "-";
+    document.getElementById('W_MIN').textContent       = "-";
+    document.getElementById('W_MAX').textContent       = "-";
+  }
+
   function fetchData() {
     database.ref(resolution).once('value', function(snapshot) {
         if (!snapshot.exists()) 
+        {
+          no_data();
           return;
+        }
 
         val = snapshot.val();
         timestamp_text = val.timestamp;
 
         if(timestamp_text == null || timestamp_text == "")
         {
-          document.getElementById('UPDATED_AT').textContent = "NO DATA";
-          document.getElementById('TEMPERATURE').textContent = "-"; 
-          document.getElementById('T_MIN').textContent       = "-";
-          document.getElementById('T_MAX').textContent       = "-";
-          document.getElementById('HUMIDITY').textContent    = "-";
-          document.getElementById('H_MIN').textContent       = "-";
-          document.getElementById('H_MAX').textContent       = "-";
-          document.getElementById('WIND').textContent        = "-";
-          document.getElementById('W_MIN').textContent       = "-";
-          document.getElementById('W_MAX').textContent       = "-";
+          no_data();
           return;
         }
 
