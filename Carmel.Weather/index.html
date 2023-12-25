@@ -3,15 +3,17 @@
 <body style="height: 100%">
 <div style = "text-align:center;">
 	<h1 style="font-size:128px;margin-bottom: 0">כרמל</h1>
-	<h2 style="font-size:64px;margin-top: 0">עכשיו</h2>
+	<h2 style="font-size:64px;margin-top: 0;margin-bottom: 0">עכשיו</h2>
+  <div id="UPDATED_AT" style="font-size:16px;margin-top: 0;">wait</div>
+  <br>
 	<img src="temperature.png" alt="Temperature" width="200" height="200">
-	<div id="TEMPERATURE" style="color:red; font-size:48px;"><strong>...</strong></div> 
+	<div id="TEMPERATURE" style="color:red; font-size:48px;"><strong>wait</strong> </div>
 	<br>
 	<img src="humidity.png" alt="Humidity" width="200" height="200">
-	<div id="HUMIDITY" style="color:blue; font-size:48px;"><strong>...</strong></div> 
+	<div id="HUMIDITY" style="color:blue; font-size:48px;"><strong>wait</strong></div> 
 	<br>
 	<img src="wind.png" alt="Wind" width="200" height="200">
-	<div id="WIND" style="color:gray; font-size:48px;"><strong>...</strong></div>
+	<div id="WIND" style="color:gray; font-size:48px;"><strong>wait</strong></div>
   <div style="display:table;margin: 0px auto;color:gray; font-size:24px;">
     <p id="W_MIN" style="display:table-cell;"></p>
     <p style="display:table-cell;"> ... </p>
@@ -22,41 +24,137 @@
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
 <script>
-  // Initialize Firebase with your configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyAHs1ZJzRuJDHXHISZws0gScD9JAjyeYkE",
-    authDomain: "",
-    databaseURL: "https://carmel-weather-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "carmel-weather",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
-  };
-  firebase.initializeApp(firebaseConfig);
 
-  // Reference to your Firebase database
-  var database = firebase.database();
+  var database;
+  var database_is_ready = false;
+  var shown_counter = 0;
 
-  // Function to fetch and display data
-  function fetchData() {
-    var dataRef = database.ref('minutely'); // Replace with your database path
-    dataRef.once('value').then(function(snapshot) {
-      text = snapshot.val();
-      arr  = text.split(";");
+  const values     = "values";
+  const trend      = "trend";
+  const timestamp  = "timestamp";
+  const up_arrow   = "\u2191";
+  const dn_arrow   = "\u2193";
+  const no_arrow   = " ";
 
-      // Update your HTML element with the data
-      document.getElementById('TEMPERATURE').textContent = arr[0]; 
-      document.getElementById('HUMIDITY').textContent    = arr[1];
-      document.getElementById('WIND').textContent        = arr[2];
-      document.getElementById('W_MIN').textContent       = arr[3];
-      document.getElementById('W_MAX').textContent       = arr[4];
-    });
+  const resolution = "minutely/";
+
+  var trend_text = "...";
+  var values_text = "...";
+
+  function set_trend_text(text) { trend_text = text; }
+  function set_values_text(text) { values_text = text; }
+  function set_database_ready() 
+  { 
+    database_is_ready = true; 
   }
 
-  // Call the fetchData function to retrieve and display the data
-  fetchData();
+  function get_trend_char(idx)  {
+    c = trend_text[idx];
+    if(c == 'U')  return up_arrow;
+    if(c == 'D')  return dn_arrow;
+    return no_arrow;
+  }
+  // Function to fetch and display data
+  function fetchData() {
+    if(!database_is_ready)
+      return;
+
+    dataRef = database.ref(resolution + values);
+    dataRef.once('value').then(function(snapshot) {
+      set_values_text(snapshot.val()); 
+    });
   
-  setInterval(fetchData, 10000);
+    values_arr  = values_text.split(";");
+
+    if(values_arr[0] == "...")
+      return;
+
+    shown_counter++;
+    
+    if(shown_counter % 10 != 1)
+      return;
+
+    var dataRef = database.ref(resolution + timestamp);
+    dataRef.once('value').then(function(snapshot) {
+      var text = snapshot.val();
+        
+    last_update = Number(text);
+    var date = new Date(last_update);
+
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // Months are zero-based
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+
+    // Create a formatted string
+    const localDateTimeString = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day} ${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+    document.getElementById('UPDATED_AT').textContent = localDateTimeString;//date.toLocalString().slice(0, 19).replace('T', ' ');
+    });
+    
+    dataRef = database.ref(resolution + trend);
+    dataRef.once('value').then(function(snapshot) {
+      set_trend_text(snapshot.val()); 
+    });
+    
+    // Update your HTML element with the data
+    document.getElementById('TEMPERATURE').textContent = values_arr[0] + get_trend_char(0); 
+    document.getElementById('HUMIDITY').textContent    = values_arr[1] + get_trend_char(1);
+    document.getElementById('WIND').textContent        = values_arr[2] + get_trend_char(2);
+    document.getElementById('W_MIN').textContent       = values_arr[3];
+    document.getElementById('W_MAX').textContent       = values_arr[4];
+  }
+
+  function sleep(ms) {
+    setTimeout(() => { }, ms);
+    //return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  function onDataReady(snapshot) {
+    database_is_ready = true;
+    snapshot.val();
+  }
+
+  function check_database_ready() {
+ //   reference = database.ref(resolution + timestamp);
+ //   reference.once('value', set_database_ready, (error) => { });
+ //   reference = database.ref(resolution + values);
+ //   reference.once('value', set_database_ready, (error) => { });
+    reference = database.ref(resolution + trend);
+    reference.once('value', set_database_ready, (error) => { });
+  }
+
+  function initialize() {
+  // Initialize Firebase with your configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyAHs1ZJzRuJDHXHISZws0gScD9JAjyeYkE",
+      authDomain: "",
+      databaseURL: "https://carmel-weather-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "carmel-weather",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    database = firebase.database();
+
+    check_database_ready();
+//    do 
+//    {
+      //setTimeout(() => { check_database_ready(); }, 1000);
+//      check_database_ready();
+//    } while (database_is_ready == false);
+
+    
+    fetchData();  
+    setInterval(fetchData, 1000);
+  }
+
+  initialize();
+
 </script>
 </body>
 </html>
