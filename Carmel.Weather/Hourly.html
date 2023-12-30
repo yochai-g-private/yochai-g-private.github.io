@@ -8,12 +8,20 @@
   <br>
   <br>
 	<img src="temperature.png" alt="Temperature" width="200" height="200">
-	<div id="TEMPERATURE" style="color:red; font-size:48px;"><strong>wait</strong> </div>
-  <div style="font-size:32px;"><p></p></div>
+	<div id="TEMPERATURE" style="color:red; font-size:48px;"><strong>wait</strong></div>
+  <div style="display:table;margin: 0px auto;color:red; font-size:32px;">
+    <p id="T_MIN" style="display:table-cell;"></p>
+    <p style="display:table-cell;"> ... </p>
+    <p id="T_MAX" style="display:table-cell;"></p>
+  </div>
 	<br>
 	<img src="humidity.png" alt="Humidity" width="200" height="200">
 	<div id="HUMIDITY" style="color:blue; font-size:48px;"><strong>wait</strong></div> 
-  <div style="font-size:32px;"><p></p></div>
+  <div style="display:table;margin: 0px auto;color:blue; font-size:32px;">
+    <p id="H_MIN" style="display:table-cell;"></p>
+    <p style="display:table-cell;"> ... </p>
+    <p id="H_MAX" style="display:table-cell;"></p>
+  </div>
 	<br>
 	<img src="wind.png" alt="Wind" width="200" height="200">
 	<div id="WIND" style="color:gray; font-size:48px;"><strong>wait</strong></div>
@@ -27,7 +35,7 @@
   <br><br><center>
     <div style="center">
       <button onclick="window.location.href='Weekly.html'" style="margin:15px;"><font size="120">שבועי</font></button>
-      <button onclick="window.location.href='Daily.html'"  style="margin:15px;"><font size="120">יומי</font></button>
+      <button onclick="window.location.href='Daily.html'" style="margin:15px;"><font size="120">יומי</font></button>
       <button onclick="window.location.href='index.html'" style="margin:15px;"><font size="120">עכשיו</font></button>
     </div>
   </center>
@@ -38,12 +46,11 @@
 <script>
 
   var database;
-
   const up_arrow   = "\u2191";
   const dn_arrow   = "\u2193";
   const no_arrow   = " ";
 
-  const resolution = "hourly/";
+  const resolution = "Data/Hourly/";
 
   function get_trend_char(trend_text, idx)  {
     if(trend_text != null && trend_text != "")
@@ -59,7 +66,11 @@
   function no_data() {
     document.getElementById('UPDATED_AT').textContent = "NO DATA";
     document.getElementById('TEMPERATURE').textContent = "-"; 
+    document.getElementById('T_MIN').textContent       = "-";
+    document.getElementById('T_MAX').textContent       = "-";
     document.getElementById('HUMIDITY').textContent    = "-";
+    document.getElementById('H_MIN').textContent       = "-";
+    document.getElementById('H_MAX').textContent       = "-";
     document.getElementById('WIND').textContent        = "-";
     document.getElementById('W_MIN').textContent       = "-";
     document.getElementById('W_MAX').textContent       = "-";
@@ -103,10 +114,14 @@
         values_arr  = values_text.split(";");
 
         document.getElementById('TEMPERATURE').textContent = values_arr[0] + get_trend_char(trend_text, 0); 
-        document.getElementById('HUMIDITY').textContent    = values_arr[1] + get_trend_char(trend_text, 1);
-        document.getElementById('WIND').textContent        = values_arr[2] + get_trend_char(trend_text, 2);
-        document.getElementById('W_MIN').textContent       = values_arr[3];
-        document.getElementById('W_MAX').textContent       = values_arr[4];
+        document.getElementById('T_MIN').textContent       = values_arr[1];
+        document.getElementById('T_MAX').textContent       = values_arr[2];
+        document.getElementById('HUMIDITY').textContent    = values_arr[3] + get_trend_char(trend_text, 1);
+        document.getElementById('H_MIN').textContent       = values_arr[4];
+        document.getElementById('H_MAX').textContent       = values_arr[5];
+        document.getElementById('WIND').textContent        = values_arr[6] + get_trend_char(trend_text, 2);
+        document.getElementById('W_MIN').textContent       = values_arr[7];
+        document.getElementById('W_MAX').textContent       = values_arr[8];
       });
   }
 
