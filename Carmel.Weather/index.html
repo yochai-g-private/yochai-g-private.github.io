@@ -1,42 +1,29 @@
 <!DOCTYPE html>
 <html>
 	<style>
-		.tooltip {
-		  position: relative;
-		  display: inline-block;
-		  border-bottom: 1px dotted black;
-		}
+    .icon-text-container {
+      display: flex;
+      align-items: center;
+    }
 
-		.tooltip .tooltiptext {
-		  visibility: visible;
-  width: 300px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -150px;
-		}
-
-		.tooltip:hover .tooltiptext {
-		  visibility: visible;
-		}
+    .icon {
+		src: "QM.png"
+      /* Add your icon styling, such as font-size or color */
+    }
 	</style>	
 	<body style="height: 100%">
-	<div style = "text-align:center;">
+	<style>
+  .blue-text {
+    color: blue;
+  }
+</style>
+
+		<div style = "text-align:center;">
 		<h1 style="font-size:192px;margin-bottom: 0">כרמל</h1>
 		<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"></h2>
 		<br>
-		<div class="tooltip" id="UPDATED_AT" style="font-size:48px;margin-top: 0;">wait
-			<span class="tooltiptext">עדכון אחרון</span>
-		</div>
-		
+		<div id="UPDATED_AT" style="font-size:48px;margin-top: 0; " onmouseover="help_UPDATED_AT()">wait</div>
+
 		<br>
 		<br>
 		<br>
@@ -62,7 +49,7 @@
   <br><br>
   <br><br><center>
     <div style="center">
-      <button id="B_WEEKLY" 		onclick="onWeekly()" 		style="margin:15px;"><font size="120">שבועי</font></button>
+      <button id="B_WEEKLY" 	onclick="onWeekly()" 		style="margin:15px;"><font size="120">שבועי</font></button>
       <button id="B_DAILY" 		onclick="onDaily()"  		style="margin:15px;"><font size="120">יומי</font></button>
       <button id="B_HOURLY" 	onclick="onHourly()" 		style="margin:15px;"><font size="120">שעתי</font></button>
       <button id="B_MINUTELY" 	onclick="onMinutely()" 	style="margin:15px;"><font size="120">עכשיו</font></button>
@@ -255,6 +242,9 @@
 
   initialize();
 
+  function help_UPDATED_AT()	{
+	alert("מועד העדכון האחרון");
+	}
 </script>
 </body>
 </html>
