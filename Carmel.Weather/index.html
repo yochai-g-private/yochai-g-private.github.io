@@ -1,11 +1,41 @@
 <!DOCTYPE html>
 <html>
+	<style>
+		.tooltip {
+		  position: relative;
+		  display: inline-block;
+		  border-bottom: 1px dotted black;
+		}
+
+		.tooltip .tooltiptext {
+		  visibility: visible;
+  width: 300px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -150px;
+		}
+
+		.tooltip:hover .tooltiptext {
+		  visibility: visible;
+		}
+	</style>	
 	<body style="height: 100%">
 	<div style = "text-align:center;">
 		<h1 style="font-size:192px;margin-bottom: 0">כרמל</h1>
 		<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"></h2>
 		<br>
-		<div id="UPDATED_AT" style="font-size:48px;margin-top: 0;">wait</div>
+		<div class="tooltip" id="UPDATED_AT" style="font-size:48px;margin-top: 0;">wait
+			<span class="tooltiptext">עדכון אחרון</span>
+		</div>
 		
 		<br>
 		<br>
