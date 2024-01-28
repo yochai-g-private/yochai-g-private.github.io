@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html>
-<body style="height: 100%">
-<div style = "text-align:center;">
-  <h1 style="font-size:192px;margin-bottom: 0">כרמל</h1>
-	<h2 style="font-size:128px;margin-top: 0;margin-bottom: 0">עכשיו</h2>
-  <div id="UPDATED_AT" style="font-size:48px;margin-top: 0;">wait</div>
-  <br>
-  <br>
-	<img src="temperature.png" alt="Temperature" width="200" height="200">
-	<div id="TEMPERATURE" style="color:red; font-size:48px;"><strong>wait</strong> </div>
-  <div style="font-size:32px;"><p></p></div>
-	<br>
-	<img src="humidity.png" alt="Humidity" width="200" height="200">
-	<div id="HUMIDITY" style="color:blue; font-size:48px;"><strong>wait</strong></div> 
-  <div style="font-size:32px;"><p></p></div>
-	<br>
-	<img src="wind.png" alt="Wind" width="200" height="200">
-	<div id="WIND" style="color:gray; font-size:48px;"><strong>wait</strong></div>
-  <div style="display:table;margin: 0px auto;color:gray; font-size:32px;">
-    <p id="W_MIN" style="display:table-cell;"></p>
-    <p style="display:table-cell;"> ... </p>
-    <p id="W_MAX" style="display:table-cell;"></p>
-  </div>
+	<body style="height: 100%">
+	<div style = "text-align:center;">
+		<h1 style="font-size:192px;margin-bottom: 0">כרמל</h1>
+		<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"></h2>
+		<div id="UPDATED_AT" style="font-size:48px;margin-top: 0;">wait</div>
+		
+		<br>
+		<br>
+		<br>
+		<br>
+		
+		<img src="temperature.png" alt="Temperature" width="200" height="200">
+		<div id="TEMPERATURE" 	style="color:red; font-size:48px; height:48px"><strong>wait</strong></div>
+		<div id="T_RANGE"	  	style="color:red; font-size:32px; height:32px"></div>
+		
+		<div style="font-size:32px;"><p></p></div>
+		<br>
+		
+		<img src="humidity.png" alt="Humidity" width="200" height="200">
+		<div id="HUMIDITY" 		style="color:blue; font-size:48px; height:48px"><strong>wait</strong></div> 
+		<div id="H_RANGE"	  	style="color:blue; font-size:32px; height:32px"></div>
+		
+		<div style="font-size:32px;"><p></p></div>
+		<br>
+		
+		<img src="wind.png" alt="Wind" width="200" height="200">
+		<div id="WIND" 			style="color:gray; font-size:48px; height:48px"><strong>wait</strong></div>
+		<div id="W_RANGE"	  	style="color:gray; font-size:32px; height:32px"></div>
 
   <br><br>
   <br><br><center>
     <div style="center">
-      <button onclick="window.location.href='Weekly.html'" style="margin:15px;"><font size="120">שבועי</font></button>
-      <button onclick="window.location.href='Daily.html'"  style="margin:15px;"><font size="120">יומי</font></button>
-      <button onclick="window.location.href='Hourly.html'" style="margin:15px;"><font size="120">שעתי</font></button>
+      <button id="B_WEEKLY" 		onclick="onWeekly()" 		style="margin:15px;"><font size="120">שבועי</font></button>
+      <button id="B_DAILY" 		onclick="onDaily()"  		style="margin:15px;"><font size="120">יומי</font></button>
+      <button id="B_HOURLY" 	onclick="onHourly()" 		style="margin:15px;"><font size="120">שעתי</font></button>
+      <button id="B_MINUTELY" 	onclick="onMinutely()" 	style="margin:15px;"><font size="120">עכשיו</font></button>
     </div>
   </center>
     
@@ -43,8 +50,15 @@
   const dn_arrow   = "\u2193";
   const no_arrow   = " ";
 
-  const resolution = "Carmel/Data/Minutely/";
-
+  const ResolutionID = { 
+	MINUTELY: 'Minutely', 
+	HOURLY	: 'Hourly',
+	DAILY	: 'Daily',
+	WEEKLY 	: 'Weekly' };
+	
+  let resolution_id = ResolutionID.MINUTELY;
+  intervalId = 0;
+  
   function get_trend_char(trend_text, idx)  {
     if(trend_text != null && trend_text != "")
     {
@@ -58,14 +72,37 @@
 
   function no_data() {
     document.getElementById('UPDATED_AT').textContent = "NO DATA";
-    document.getElementById('TEMPERATURE').textContent = "-"; 
-    document.getElementById('HUMIDITY').textContent    = "-";
-    document.getElementById('WIND').textContent        = "-";
-    document.getElementById('W_MIN').textContent       = "-";
-    document.getElementById('W_MAX').textContent       = "-";
+    document.getElementById('TEMPERATURE').textContent 	= ""; 
+    document.getElementById('T_RANGE').textContent 		= ""; 
+    document.getElementById('HUMIDITY').textContent    	= "";
+    document.getElementById('H_RANGE').textContent 		= ""; 
+    document.getElementById('WIND').textContent        	= "";
+    document.getElementById('W_RANGE').textContent 		= ""; 
   }
 
-  function fetchData() {
+  function updateMinutely(values_arr, trend_text)
+  {
+	document.getElementById('TEMPERATURE').textContent = values_arr[0] + get_trend_char(trend_text, 0); 
+	document.getElementById('T_RANGE').textContent     = "";
+	document.getElementById('HUMIDITY').textContent    = values_arr[1] + get_trend_char(trend_text, 1);
+	document.getElementById('H_RANGE').textContent     = "";
+	document.getElementById('WIND').textContent        = values_arr[2] + get_trend_char(trend_text, 2);
+	document.getElementById('W_RANGE').textContent     = values_arr[3].toString() + " .. " + values_arr[4].toString();
+  }
+  
+  function updateHDW(values_arr, trend_text)
+  {
+	document.getElementById('TEMPERATURE').textContent = values_arr[0] + get_trend_char(trend_text, 0); 
+	document.getElementById('T_RANGE').textContent     = values_arr[1].toString() + " .. " + values_arr[2].toString();
+	document.getElementById('HUMIDITY').textContent    = values_arr[3] + get_trend_char(trend_text, 1);
+	document.getElementById('H_RANGE').textContent     = values_arr[4].toString() + " .. " + values_arr[5].toString();
+	document.getElementById('WIND').textContent        = values_arr[6] + get_trend_char(trend_text, 2);
+	document.getElementById('W_RANGE').textContent     = values_arr[7].toString() + " .. " + values_arr[8].toString();
+  }
+  
+  function update() {
+	resolution = "Carmel/Data/" + resolution_id;
+	
     database.ref(resolution).once('value', function(snapshot) {
         if (!snapshot.exists()) 
         {
@@ -102,14 +139,70 @@
 
         values_arr  = values_text.split(";");
 
-        document.getElementById('TEMPERATURE').textContent = values_arr[0] + get_trend_char(trend_text, 0); 
-        document.getElementById('HUMIDITY').textContent    = values_arr[1] + get_trend_char(trend_text, 1);
-        document.getElementById('WIND').textContent        = values_arr[2] + get_trend_char(trend_text, 2);
-        document.getElementById('W_MIN').textContent       = values_arr[3];
-        document.getElementById('W_MAX').textContent       = values_arr[4];
+		switch(resolution_id)
+		{
+			case ResolutionID.MINUTELY: updateMinutely(values_arr, trend_text); 	break;
+			default: 					updateHDW     (values_arr, trend_text); 	break;
+		}
       });
   }
 
+  function onWeekly()	{
+	clearInterval(intervalId);
+	resolution_id = ResolutionID.WEEKLY;
+	
+	document.getElementById('RESOLUTION').textContent 	= "שבועי";
+	document.getElementById('B_WEEKLY').hidden 			= true;
+	document.getElementById('B_DAILY').hidden 			= false;
+	document.getElementById('B_HOURLY').hidden 			= false;
+	document.getElementById('B_MINUTELY').hidden 		= false;
+	
+	update();
+	intervalId = setInterval(update, 10000);
+  }
+  
+  function onDaily()	{
+	clearInterval(intervalId);
+	resolution_id = ResolutionID.DAILY;
+	
+	document.getElementById('RESOLUTION').textContent 	= "יומי";
+	document.getElementById('B_WEEKLY').hidden 			= false;
+	document.getElementById('B_DAILY').hidden 			= true;
+	document.getElementById('B_HOURLY').hidden 			= false;
+	document.getElementById('B_MINUTELY').hidden 		= false;
+	
+	update();
+	intervalId = setInterval(update, 10000);
+  }
+  
+  function onHourly()	{
+	clearInterval(intervalId);
+	resolution_id = ResolutionID.HOURLY;
+	
+	document.getElementById('RESOLUTION').textContent = "שעתי";
+	document.getElementById('B_WEEKLY').hidden 		= false;
+	document.getElementById('B_DAILY').hidden 		= false;
+	document.getElementById('B_HOURLY').hidden 		= true;
+	document.getElementById('B_MINUTELY').hidden 	= false;
+	
+	update();
+	intervalId = setInterval(update, 10000);
+  }
+  
+  function onMinutely()	{
+	clearInterval(intervalId);
+	resolution_id = ResolutionID.MINUTELY;
+	
+	document.getElementById('RESOLUTION').textContent = "עכשיו";
+	document.getElementById('B_WEEKLY').hidden 		= false;
+	document.getElementById('B_DAILY').hidden 		= false;
+	document.getElementById('B_HOURLY').hidden 		= false;
+	document.getElementById('B_MINUTELY').hidden 	= true;
+	
+	update();
+	intervalId = setInterval(update, 10000);
+  }
+  
   function initialize() {
   // Initialize Firebase with your configuration
     var firebaseConfig = {
@@ -125,8 +218,9 @@
     firebase.initializeApp(firebaseConfig);
     database = firebase.database();
 
-    fetchData();  
-    setInterval(fetchData, 10000);
+	onMinutely();
+    //fetchData();  
+    //setInterval(fetchData, 10000);
   }
 
   initialize();
