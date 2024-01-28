@@ -20,7 +20,7 @@
 
 		<div style = "text-align:center;">
 		<h1 style="font-size:192px;margin-bottom: 0">כרמל</h1>
-		<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"></h2>
+		<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"  onmouseover="help_RESOLUTION()"></h2>
 		<br>
 		<div id="UPDATED_AT" style="font-size:48px;margin-top: 0; " onmouseover="help_UPDATED_AT()">wait</div>
 
@@ -236,12 +236,23 @@
     database = firebase.database();
 
 	onMinutely();
-    //fetchData();  
-    //setInterval(fetchData, 10000);
   }
 
   initialize();
 
+  function help_RESOLUTION()	{
+	text = "?";
+	switch(resolution_id)
+	{
+		case ResolutionID.MINUTELY: text = "ממוצע הדקה האחרונה"; 		break;
+		case ResolutionID.HOURLY: 	text = "ממוצע 60 הדקות האחרונות"; 	break;
+		case ResolutionID.DAILY: 	text = "ממוצע 24 השעות האחרונות"; 	break;
+		case ResolutionID.WEEKLY: 	text = "ממוצע 7 היממות האחרונות"; 	break;
+	}
+	
+	alert(text);
+  }
+  
   function help_UPDATED_AT()	{
 	alert("מועד העדכון האחרון");
 	}
