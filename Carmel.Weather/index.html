@@ -1,37 +1,26 @@
 <!DOCTYPE html>
 <html>
-	<style>
-    .icon-text-container {
-      display: flex;
-      align-items: center;
-    }
+<head> 
+	<title> 
+		מזג האוויר במושב כרמל 
+	</title> 
+</head> 
 
-    .icon {
-		src: "QM.png"
-      /* Add your icon styling, such as font-size or color */
-    }
-	</style>	
-	<body style="height: 100%">
+<body style="height: 100%">
 	<style>
-  .blue-text {
-    color: blue;
-  }
+	
     body {
-      /* Specify the path to your image file */
       background-image: url('LOGO.png');
-      /* Set the background size and other properties as needed */
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-	  background-attachment: fixed;
-      /* Optionally, you can add a background color as a fallback */
+	  opacity: 1;
+      background-size: 50% 80%;
+      background-position: top center;
+     background-repeat: no-repeat;
+ 	  background-attachment: fixed;
       background-color: #ffffff; /*#000000;*/ /*#f0f0f0;*/
     }
-  
-</style>
-
-		<div style = "text-align:center;">
-		<h1 style="font-size:192px;margin-bottom: 0">כרמל</h1>
+	</style>
+	<div style = "text-align:center;">
+		<h1 style="font-size:192px;margin-bottom: 0; opacity: 1">כרמל</h1>
 		<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"  onmouseover="help_RESOLUTION()"></h2>
 		<br>
 		<div id="UPDATED_AT" style="font-size:48px;margin-top: 0; " onmouseover="help_UPDATED_AT()">wait</div>
@@ -58,16 +47,19 @@
 		<div id="WIND" 			style="color:gray; font-size:48px; height:48px"><strong>wait</strong></div>
 		<div id="W_RANGE"	  	style="color:gray; font-size:32px; height:32px"></div>
 
-  <br><br>
-  <br><br><center>
-    <div style="center">
-      <button id="B_WEEKLY" 	onclick="onWeekly()" 		style="margin:15px;"><font size="120">שבועי</font></button>
-      <button id="B_DAILY" 		onclick="onDaily()"  		style="margin:15px;"><font size="120">יומי</font></button>
-      <button id="B_HOURLY" 	onclick="onHourly()" 		style="margin:15px;"><font size="120">שעתי</font></button>
-      <button id="B_MINUTELY" 	onclick="onMinutely()" 	style="margin:15px;"><font size="120">עכשיו</font></button>
-    </div>
-  </center>
-    
+		<br><br>
+		<br><br>
+		
+
+		<center>
+			<div style="center">
+			  <button id="B_WEEKLY" 	onclick="onWeekly()" 		style="margin:15px;"><font size="120">שבועי</font></button>
+			  <button id="B_DAILY" 		onclick="onDaily()"  		style="margin:15px;"><font size="120">יומי</font></button>
+			  <button id="B_HOURLY" 	onclick="onHourly()" 		style="margin:15px;"><font size="120">שעתי</font></button>
+			  <button id="B_MINUTELY" 	onclick="onMinutely()" 	style="margin:15px;"><font size="120">עכשיו</font></button>
+			</div>
+		</center>
+
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
@@ -269,5 +261,6 @@
 	alert("מועד העדכון האחרון");
 	}
 </script>
+</div>
 </body>
 </html>
