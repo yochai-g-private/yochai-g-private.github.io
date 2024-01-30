@@ -137,6 +137,8 @@
   }
   
   function update() {
+	clearInterval(blinkerId);
+	
 	resolution = "Carmel/Data/" + resolution_id;
 	
     database.ref(resolution).once('value', function(snapshot) {
@@ -188,7 +190,6 @@
 		not_up_to_date = (max_timeDifference < timeDifference);
 		//up_to_date = false;
 		
-		clearInterval(blinkerId);
 		if(not_up_to_date)	
 			blinkerId = setInterval(blink, 2000);
 
