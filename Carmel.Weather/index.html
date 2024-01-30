@@ -79,6 +79,10 @@
 	
   let resolution_id = ResolutionID.MINUTELY;
   intervalId = 0;
+  blinkerId  = 0;
+  
+  const refresh_frequency = 10 * 1000;
+  var up_to_date = true;
   
   function get_trend_char(trend_text, idx)  {
     if(trend_text != null && trend_text != "")
@@ -121,6 +125,17 @@
 	document.getElementById('W_RANGE').textContent     = values_arr[7].toString() + " .. " + values_arr[8].toString();
   }
   
+  var localDateTimeString;
+  
+  function blink()
+  {
+	elem = document.getElementById('UPDATED_AT');
+	if(elem.textContent == localDateTimeString)
+		elem.textContent = 'לא עדכני';
+	else
+		elem.textContent = localDateTimeString;
+  }
+  
   function update() {
 	resolution = "Carmel/Data/" + resolution_id;
 	
@@ -141,18 +156,43 @@
         }
 
         last_update = Number(timestamp_text);
-        var date = new Date(last_update);
+        var updated_at = new Date(last_update);
 
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1; // Months are zero-based
-        const day = date.getDate();
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const seconds = date.getSeconds();
+        const year = updated_at.getFullYear();
+        const month = updated_at.getMonth() + 1; // Months are zero-based
+        const day = updated_at.getDate();
+        const hours = updated_at.getHours();
+        const minutes = updated_at.getMinutes();
+        const seconds = updated_at.getSeconds();
 
         // Create a formatted string
-        const localDateTimeString = `${day}-${month < 10 ? '0' : ''}${month}-${year} ${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        localDateTimeString = `${day}-${month < 10 ? '0' : ''}${month}-${year} ${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
+		now_t = new Date().getTime();
+		upd_t = updated_at.getTime();
+		
+		const timeDifference = (now_t - upd_t) / 1000;
+		
+		max_timeDifference = 60;
+		
+		switch(resolution_id)
+		{
+			case ResolutionID.DAILY: max_timeDifference =  3600;		break;
+			case ResolutionID.DAILY: max_timeDifference = 86400;		break;
+		}
+		
+		max_timeDifference += refresh_frequency / 1000;
+		
+		console.log('timeDifference: ', timeDifference);
+		
+		up_to_date = (max_timeDifference >= timeDifference);
+		//up_to_date = false;
+		if(up_to_date)	
+			clearInterval(blinkerId);
+		else			
+			blinkerId = setInterval(blink, 2000);
+
+        document.getElementById('UPDATED_AT').style.color = (up_to_date) ? 'black' : 'red';
         document.getElementById('UPDATED_AT').textContent = localDateTimeString;
 
         values_text    = val.values;
@@ -207,7 +247,7 @@
 	document.getElementById('B_MINUTELY').hidden 	= false;
 	
 	update();
-	intervalId = setInterval(update, 10000);
+	intervalId = setInterval(update, refresh_frequency);
   }
   
   function onMinutely()	{
@@ -221,7 +261,7 @@
 	document.getElementById('B_MINUTELY').hidden 	= true;
 	
 	update();
-	intervalId = setInterval(update, 10000);
+	intervalId = setInterval(update, refresh_frequency);
   }
   
 	function getSunsetTime() {
@@ -242,8 +282,8 @@
 			console.log('NOW:', now.toLocaleTimeString());
 			console.log('Is night:', is_night);
 			
-			//if(is_night)
-				//document.body.style.backgroundColor = "#202020";
+			if(is_night)
+				document.body.style.backgroundColor = "#202020";
 		})
 		.catch(error => {
 		  console.error('Error fetching sunset time:', error);
