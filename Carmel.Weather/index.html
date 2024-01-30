@@ -37,15 +37,15 @@
 		<br>
 		
 		<img src="humidity.png" alt="Humidity" width="200" height="200">
-		<div id="HUMIDITY" 		style="color:blue; font-size:48px; height:48px"><strong>wait</strong></div> 
-		<div id="H_RANGE"	  	style="color:blue; font-size:32px; height:32px"></div>
+		<div id="HUMIDITY" 		style="color:#2196f3; font-size:48px; height:48px"><strong>wait</strong></div> 
+		<div id="H_RANGE"	  	style="color:#2196f3; font-size:32px; height:32px"></div>
 		
 		<div style="font-size:32px;"><p></p></div>
 		<br>
 		
 		<img src="wind.png" alt="Wind" width="200" height="200">
-		<div id="WIND" 			style="color:gray; font-size:48px; height:48px"><strong>wait</strong></div>
-		<div id="W_RANGE"	  	style="color:gray; font-size:32px; height:32px"></div>
+		<div id="WIND" 			style="color:#b8cfec; font-size:48px; height:48px"><strong>wait</strong></div>
+		<div id="W_RANGE"	  	style="color:#b8cfec; font-size:32px; height:32px"></div>
 
 		<br><br>
 		<br><br>
@@ -234,7 +234,7 @@
 			sunset = new Date(data.results.sunset);
 			sunrise = new Date(data.results.sunrise);
 			now = new Date();
-			//now.setHours(2, 0, 0);
+			now.setHours(2, 0, 0);
 			is_night = now >= sunset || now < sunrise;
 			
 			console.log('Sunrise time:', sunrise.toLocaleTimeString());
@@ -242,8 +242,8 @@
 			console.log('NOW:', now.toLocaleTimeString());
 			console.log('Is night:', is_night);
 			
-			if(is_night)
-				document.body.style.backgroundColor = "#101010";
+			//if(is_night)
+				//document.body.style.backgroundColor = "#202020";
 		})
 		.catch(error => {
 		  console.error('Error fetching sunset time:', error);
