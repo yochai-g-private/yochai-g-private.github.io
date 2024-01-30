@@ -185,14 +185,14 @@
 		
 		console.log('timeDifference: ', timeDifference);
 		
-		up_to_date = (max_timeDifference >= timeDifference);
+		not_up_to_date = (max_timeDifference < timeDifference);
 		//up_to_date = false;
-		if(up_to_date)	
-			clearInterval(blinkerId);
-		else			
+		
+		clearInterval(blinkerId);
+		if(not_up_to_date)	
 			blinkerId = setInterval(blink, 2000);
 
-        document.getElementById('UPDATED_AT').style.color = (up_to_date) ? 'black' : 'red';
+        document.getElementById('UPDATED_AT').style.color = (not_up_to_date) ? 'red' : 'black';
         document.getElementById('UPDATED_AT').textContent = localDateTimeString;
 
         values_text    = val.values;
