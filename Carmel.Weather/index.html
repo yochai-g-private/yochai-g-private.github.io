@@ -18,22 +18,25 @@
 
         /* Balloon content styling */
         .balloon-content {
+			font-size: 32px;
             display: none;
             position: absolute;
             background-color: #f9f9f9;
             color: #333;
-            padding: 32px;
+            padding: 10px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1;
-            width: 200px;
+			/*max-width: 1200px;*/
+			top: -30px;
+            width: 500px;
         }
 
         /* Balloon arrow styling */
         .balloon-content::after {
-            /*content: "";*/
+           content: "";
             position: absolute;
-            top: 100%;
+            top: 100%; /* Adjusted to point downwards */
             left: 50%;
             margin-left: -10px;
             border-width: 10px;
@@ -59,13 +62,17 @@
 	</style>
 	<div style = "text-align:center;">
 		<h1 style="font-size:192px;margin-bottom: 0; opacity: 1">כרמל</h1>
-	<div class="balloon-container">
-        <!-- Balloon content -->
-        <div id="balloon_RESOLUTION" class="balloon-content"></div>
-		<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"  onmouseover="help_RESOLUTION()" onmouseout="hide_balloon_RESOLUTION()"></h2>
-    </div>		
+		<div class="balloon-container">
+			<!-- Balloon content -->
+			<div id="balloon_RESOLUTION" class="balloon-content"></div>
+			<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"  onmouseover="show_balloon_RESOLUTION()" onmouseout="hide_balloon_RESOLUTION()"></h2>
+		</div>		
 		<br>
-		<div id="UPDATED_AT" style="font-size:48px;margin-top: 0; " onmouseover="help_UPDATED_AT()">wait</div>
+		<div class="balloon-container">
+			<!-- Balloon content -->
+			<div id="balloon_UPDATED_AT" class="balloon-content"></div>
+			<div id="UPDATED_AT" style="font-size:48px;margin-top: 0; " onmouseover="show_balloon_UPDATED_AT()" onmouseout="hide_balloon_UPDATED_AT()">wait</div>
+		</div>		
 
 		<br>
 		<br>
@@ -360,6 +367,15 @@
 
   initialize();
 
+  function show_balloon(id, text)	{
+	elem = document.getElementById(id);
+	elem.textContent   = text;
+	elem.style.display = 'block';
+	elem.style.width = 'auto';
+	var contentWidth = elem.offsetWidth;
+    elem.style.width = contentWidth + 'px';
+  }
+  
   function show_balloon_RESOLUTION()	{
 	text = "?";
 	switch(resolution_id)
@@ -369,8 +385,8 @@
 		case ResolutionID.DAILY: 	text = "ממוצע 24 השעות האחרונות"; 	break;
 		case ResolutionID.WEEKLY: 	text = "ממוצע 7 היממות האחרונות"; 	break;
 	}
-	
-	document.getElementById('balloon_RESOLUTION').style.display = 'block';
+
+	show_balloon('balloon_RESOLUTION', text);
   }
 
   function hide_balloon_RESOLUTION()	{
@@ -390,6 +406,14 @@
 	alert(text);
   }
   
+  function show_balloon_UPDATED_AT()	{
+	show_balloon('balloon_UPDATED_AT', "מועד העדכון האחרון");
+	}
+
+  function hide_balloon_UPDATED_AT()	{
+	document.getElementById('balloon_UPDATED_AT').style.display = 'none';
+  }
+
   function help_UPDATED_AT()	{
 	alert("מועד העדכון האחרון");
 	}
