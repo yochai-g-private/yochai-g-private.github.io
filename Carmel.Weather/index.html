@@ -4,6 +4,12 @@
 	<title> 
 		מזג האוויר במושב כרמל 
 	</title> 
+    <style>
+        /* Initially hide the body */
+        body {
+            display: none;
+        }
+    </style>
 </head> 
 
 <body style="height: 100%">
@@ -137,7 +143,7 @@
 		elem.textContent = localDateTimeString;
   }
   
-  function update() {
+  function _update() {
 	clearInterval(blinkerId);
 	
 	resolution = "Carmel/Data/" + resolution_id;
@@ -210,6 +216,11 @@
       });
   }
 
+  function update() {
+	_update();
+	setBackgroundColor();
+  }
+  
   function onWeekly()	{
 	clearInterval(intervalId);
 	resolution_id = ResolutionID.WEEKLY;
@@ -266,34 +277,34 @@
 	intervalId = setInterval(update, refresh_frequency);
   }
   
-	function getSunsetTime() {
-	  const apiUrl = `https://api.sunrise-sunset.org/json?lat=31.424836&lng=35.182815&formatted=0&tzid=UTC`;
+  function setBackgroundColor() {
+//	  const apiUrl = `https://api.sunrise-sunset.org/json?lat=31.424836&lng=35.182815&date=today&formatted=0&tzid=UTC`;
+    const apiUrl = `https://api.sunrise-sunset.org/json?lat=31.424836&lng=35.182815&formatted=0&tzid=UTC`;
 
-	  // Fetch the sunset data
-	  fetch(apiUrl)
-		.then(response => response.json())
-		.then(data => {
-			sunset = new Date(data.results.sunset);
-			sunrise = new Date(data.results.sunrise);
-			now = new Date();
-			now.setHours(2, 0, 0);
-			is_night = now >= sunset || now < sunrise;
-			
-			console.log('Sunrise time:', sunrise.toLocaleTimeString());
-			console.log('Sunset time:',  sunset.toLocaleTimeString());
-			console.log('NOW:', now.toLocaleTimeString());
-			console.log('Is night:', is_night);
-			
-			//if(is_night)
-			//	document.body.style.backgroundColor = "#202020";
-		})
-		.catch(error => {
-		  console.error('Error fetching sunset time:', error);
-		});
-	}
+  // Fetch the sunset data
+    fetch(apiUrl)
+	  .then(response => response.json())
+	  .then(data => {
+		sunset = new Date(data.results.sunset);
+		sunrise = new Date(data.results.sunrise);
+		now = new Date();
+		//now.setHours(2, 0, 0);
+		is_night = now >= sunset || now < sunrise;
+		
+		console.log('Sunrise time:', sunrise.toLocaleTimeString());
+		console.log('Sunset time:',  sunset.toLocaleTimeString());
+		console.log('NOW:', now.toLocaleTimeString());
+		console.log('Is night:', is_night);
+		//is_night = true;
+		document.body.style.backgroundColor = (is_night) ? "#202020" : "#ffffff";
+		document.body.style.display = "block";
+	  })
+	  .catch(error => {
+	    console.error('Error fetching sunset time:', error);
+	  });
+  }
 
   function initialize() {
-	getSunsetTime();
   // Initialize Firebase with your configuration
     var firebaseConfig = {
       apiKey: "AIzaSyA_Uje9DJhLGwoIfBqepiInDCdyvuJS_Yo",
