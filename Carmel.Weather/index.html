@@ -349,6 +349,8 @@
 
   function initialize() {
   // Initialize Firebase with your configuration
+    //USER=smart.glauber@gmail.com
+	//PASS=Carmel/WeatherWEB
     var firebaseConfig = {
       apiKey: "AIzaSyA_Uje9DJhLGwoIfBqepiInDCdyvuJS_Yo",
       authDomain: "",
@@ -361,7 +363,20 @@
 
     firebase.initializeApp(firebaseConfig);
     database = firebase.database();
-
+	
+	firebase.auth().signInWithEmailAndPassword('smart.glauber@gmail.com', 'Carmel/WeatherWEB')
+		.then((userCredential) => {
+			// Signed in
+			const user = userCredential.user;
+			console.log('User signed in:', user);
+			// Perform actions after successful sign-in
+		})
+		.catch((error) => {
+			const errorCode = error.code;
+			const errorMessage = error.message;
+			console.error('Sign-in error:', errorCode, errorMessage);
+		});
+	
 	onMinutely();
   }
 
