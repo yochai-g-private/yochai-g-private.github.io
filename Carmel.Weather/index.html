@@ -102,10 +102,10 @@
 
 		<center>
 			<div style="center">
-			  <button id="B_WEEKLY" 	onclick="onWeekly()" 		style="margin:15px;"><font size="120">שבועי</font></button>
-			  <button id="B_DAILY" 		onclick="onDaily()"  		style="margin:15px;"><font size="120">יומי</font></button>
-			  <button id="B_HOURLY" 	onclick="onHourly()" 		style="margin:15px;"><font size="120">שעתי</font></button>
-			  <button id="B_MINUTELY" 	onclick="onMinutely()" 	style="margin:15px;"><font size="120">עכשיו</font></button>
+			  <button id="B_WEEKLY" 	onclick="onWeekly()" 		style="width:160px;margin:20px;"><font size="120">שבועי</font></button>
+			  <button id="B_DAILY" 		onclick="onDaily()"  		style="width:160px;margin:20px;"><font size="120">יומי</font></button>
+			  <button id="B_HOURLY" 	onclick="onHourly()" 		style="width:160px;margin:20px;"><font size="120">שעתי</font></button>
+			  <button id="B_MINUTELY" 	onclick="onMinutely()" 		style="width:160px;margin:20px;"><font size="120">עכשיו</font></button>
 			</div>
 		</center>
 
@@ -339,7 +339,7 @@
 		console.log('NOW:', now.toLocaleTimeString());
 		console.log('Is night:', is_night);
 		//is_night = true;
-		document.body.style.backgroundColor = (is_night) ? "#202020" : "#ffffff";
+		document.body.style.backgroundColor = (is_night) ? "#404040" : "#ffffff";
 		document.body.style.display = "block";
 	  })
 	  .catch(error => {
