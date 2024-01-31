@@ -229,8 +229,8 @@
 		
 		switch(resolution_id)
 		{
-			case ResolutionID.DAILY: max_timeDifference =  3600;		break;
-			case ResolutionID.DAILY: max_timeDifference = 86400;		break;
+			case ResolutionID.DAILY:  max_timeDifference =  3600;		break;
+			case ResolutionID.WEEKLY: max_timeDifference = 86400;		break;
 		}
 		
 		max_timeDifference += refresh_frequency / 1000;
@@ -408,19 +408,6 @@
 	document.getElementById('balloon_RESOLUTION').style.display = 'none';
   }
   
-  function help_RESOLUTION()	{
-	text = "?";
-	switch(resolution_id)
-	{
-		case ResolutionID.MINUTELY: text = "ממוצע הדקה האחרונה"; 		break;
-		case ResolutionID.HOURLY: 	text = "ממוצע 60 הדקות האחרונות"; 	break;
-		case ResolutionID.DAILY: 	text = "ממוצע 24 השעות האחרונות"; 	break;
-		case ResolutionID.WEEKLY: 	text = "ממוצע 7 היממות האחרונות"; 	break;
-	}
-	
-	alert(text);
-  }
-  
   function show_balloon_UPDATED_AT()	{
 	show_balloon('balloon_UPDATED_AT', "מועד העדכון האחרון");
 	}
@@ -428,10 +415,6 @@
   function hide_balloon_UPDATED_AT()	{
 	document.getElementById('balloon_UPDATED_AT').style.display = 'none';
   }
-
-  function help_UPDATED_AT()	{
-	alert("מועד העדכון האחרון");
-	}
 </script>
 </div>
 </body>
