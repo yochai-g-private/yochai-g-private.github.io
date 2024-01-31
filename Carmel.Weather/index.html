@@ -9,6 +9,38 @@
         body {
             display: none;
         }
+		
+        /* Balloon container styling */
+        .balloon-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Balloon content styling */
+        .balloon-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 32px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            width: 200px;
+        }
+
+        /* Balloon arrow styling */
+        .balloon-content::after {
+            /*content: "";*/
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -10px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: #f9f9f9 transparent transparent transparent;
+        }
+		
     </style>
 </head> 
 
@@ -20,14 +52,18 @@
 	  opacity: 1;
       background-size: 130% 80%;
       background-position: top center;
-     background-repeat: no-repeat;
+      background-repeat: no-repeat;
  	  background-attachment: fixed;
       background-color: #ffffff; /*#000000;*/ /*#f0f0f0;*/
     }
 	</style>
 	<div style = "text-align:center;">
 		<h1 style="font-size:192px;margin-bottom: 0; opacity: 1">כרמל</h1>
-		<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"  onmouseover="help_RESOLUTION()"></h2>
+	<div class="balloon-container">
+        <!-- Balloon content -->
+        <div id="balloon_RESOLUTION" class="balloon-content"></div>
+		<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"  onmouseover="help_RESOLUTION()" onmouseout="hide_balloon_RESOLUTION()"></h2>
+    </div>		
 		<br>
 		<div id="UPDATED_AT" style="font-size:48px;margin-top: 0; " onmouseover="help_UPDATED_AT()">wait</div>
 
@@ -324,6 +360,23 @@
 
   initialize();
 
+  function show_balloon_RESOLUTION()	{
+	text = "?";
+	switch(resolution_id)
+	{
+		case ResolutionID.MINUTELY: text = "ממוצע הדקה האחרונה"; 		break;
+		case ResolutionID.HOURLY: 	text = "ממוצע 60 הדקות האחרונות"; 	break;
+		case ResolutionID.DAILY: 	text = "ממוצע 24 השעות האחרונות"; 	break;
+		case ResolutionID.WEEKLY: 	text = "ממוצע 7 היממות האחרונות"; 	break;
+	}
+	
+	document.getElementById('balloon_RESOLUTION').style.display = 'block';
+  }
+
+  function hide_balloon_RESOLUTION()	{
+	document.getElementById('balloon_RESOLUTION').style.display = 'none';
+  }
+  
   function help_RESOLUTION()	{
 	text = "?";
 	switch(resolution_id)
