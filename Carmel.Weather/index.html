@@ -127,6 +127,8 @@
   const up_arrow   = "\u2191";
   const dn_arrow   = "\u2193";
   const no_arrow   = " ";
+  const sun_up	   = "\u{1F305}";
+  const sun_dn	   = "\u{1F307}";
 
   const ResolutionID = { 
 	MINUTELY: 'Minutely', 
@@ -344,8 +346,8 @@
 		
 		sunset_s  = sunset.toLocaleTimeString('it-IT');
 		sunrise_s = sunrise.toLocaleTimeString('it-IT');
-		document.getElementById('SUNSET').textContent = sunset_s;
-		document.getElementById('SUNRISE').textContent = sunrise_s;
+		document.getElementById('SUNSET').textContent = sun_dn + " : " + sunset_s;
+		document.getElementById('SUNRISE').textContent = sunrise_s + " : " + sun_up;
 
 		console.log('Sunrise time:', sunrise_s);
 		console.log('Sunset time:',  sunset_s);
