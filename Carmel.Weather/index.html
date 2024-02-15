@@ -114,8 +114,14 @@
 		<br>
 
 		<div style="display: flex; justify-content: space-between; color:black; font-size:60px;">
-			<div id="SUNSET">.</div>
-			<div id="SUNRISE">.</div>
+			<div  style="display: flex; justify-content: space-between;">
+				<img src="sunset.png" alt="Wind" width="110" height="95">
+				<div id="SUNSET">.</div>
+			</div>
+			<div  style="display: flex; justify-content: space-between;">
+				<div id="SUNRISE">.</div>
+				<img src="sunrise.png" alt="Wind" width="110" height="95">
+			</div>
 		</div>		
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
@@ -127,8 +133,8 @@
   const up_arrow   = "\u2191";
   const dn_arrow   = "\u2193";
   const no_arrow   = " ";
-  const sun_up	   = "\u{1F305}";
-  const sun_dn	   = "\u{1F307}";
+  //const sun_up	   = "\u{1F305}";
+  //const sun_dn	   = "\u{1F307}";
 
   const ResolutionID = { 
 	MINUTELY: 'Minutely', 
@@ -361,8 +367,8 @@
 			e_SUNRISE.style.color = 'black';
 		}
 
-		e_SUNSET.textContent  = sun_dn +    " " + sunset_s;
-		e_SUNRISE.textContent = sunrise_s + " " + sun_up;
+		e_SUNSET.textContent  = sunset_s;
+		e_SUNRISE.textContent = sunrise_s;
 
 		console.log('Sunrise time:', sunrise_s);
 		console.log('Sunset time:',  sunset_s);
