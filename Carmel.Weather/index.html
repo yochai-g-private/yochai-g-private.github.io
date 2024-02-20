@@ -349,7 +349,7 @@
 		now = new Date();
 		//now.setHours(2, 0, 0);
 		is_night = now >= sunset || now < sunrise;
-		
+		is_night = true;
 		sunset_s  = sunset.toLocaleTimeString('it-IT');
 		sunrise_s = sunrise.toLocaleTimeString('it-IT');
 
