@@ -251,11 +251,13 @@
 		
 		switch(resolution_id)
 		{
-			case ResolutionID.DAILY:  max_timeDifference =  3600;		break;
-			case ResolutionID.WEEKLY: max_timeDifference = 86400;		break;
+			case ResolutionID.DAILY:   max_timeDifference =  3600;		break;
+			case ResolutionID.WEEKLY:  max_timeDifference = 86400;		break;
+			case ResolutionID.MONTHLY: max_timeDifference = 86400;		break;
+			case ResolutionID.YEARLY:  max_timeDifference = 86400 * 31;	break;
 		}
 		
-		max_timeDifference += refresh_frequency / 1000;
+		max_timeDifference += 60;//refresh_frequency / 1000;
 		
 		console.log('timeDifference: ', timeDifference);
 		
