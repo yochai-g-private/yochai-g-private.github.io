@@ -106,6 +106,8 @@
 
 		<center>
 			<div style="center">
+			  <button id="B_YEARLY" 	onclick="onYearly()" 		style="width:160px;margin:20px;"><font size="120">שנתי</font></button>
+			  <button id="B_MONTHLY" 	onclick="onMonthly()" 		style="width:160px;margin:20px;"><font size="120">חודשי</font></button>
 			  <button id="B_WEEKLY" 	onclick="onWeekly()" 		style="width:160px;margin:20px;"><font size="120">שבועי</font></button>
 			  <button id="B_DAILY" 		onclick="onDaily()"  		style="width:160px;margin:20px;"><font size="120">יומי</font></button>
 			  <button id="B_HOURLY" 	onclick="onHourly()" 		style="width:160px;margin:20px;"><font size="120">שעתי</font></button>
@@ -142,7 +144,9 @@
 	MINUTELY: 'Minutely', 
 	HOURLY	: 'Hourly',
 	DAILY	: 'Daily',
-	WEEKLY 	: 'Weekly' };
+	WEEKLY 	: 'Weekly',
+    MONTHLY : 'Monthly',
+	YEARLY  : 'Yearly' };
 	
   let resolution_id = ResolutionID.MINUTELY;
   intervalId = 0;
@@ -282,11 +286,45 @@
 	setBackgroundColor();
   }
   
+  function onYearly()	{
+	clearInterval(intervalId);
+	resolution_id = ResolutionID.YEARLY;
+	
+	document.getElementById('RESOLUTION').textContent 	= "שנתי";
+	document.getElementById('B_YEARLY').hidden 			= true;
+	document.getElementById('B_MONTHLY').hidden 		= false;
+	document.getElementById('B_WEEKLY').hidden 			= false;
+	document.getElementById('B_DAILY').hidden 			= false;
+	document.getElementById('B_HOURLY').hidden 			= false;
+	document.getElementById('B_MINUTELY').hidden 		= false;
+	
+	update();
+	intervalId = setInterval(update, 10000);
+  }
+
+  function onMonthly()	{
+	clearInterval(intervalId);
+	resolution_id = ResolutionID.MONTHLY;
+	
+	document.getElementById('RESOLUTION').textContent 	= "חודשי";
+	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById('B_MONTHLY').hidden 		= true;
+	document.getElementById('B_WEEKLY').hidden 			= false;
+	document.getElementById('B_DAILY').hidden 			= false;
+	document.getElementById('B_HOURLY').hidden 			= false;
+	document.getElementById('B_MINUTELY').hidden 		= false;
+	
+	update();
+	intervalId = setInterval(update, 10000);
+  }
+  
   function onWeekly()	{
 	clearInterval(intervalId);
 	resolution_id = ResolutionID.WEEKLY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "שבועי";
+	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById('B_MONTHLY').hidden 		= false;
 	document.getElementById('B_WEEKLY').hidden 			= true;
 	document.getElementById('B_DAILY').hidden 			= false;
 	document.getElementById('B_HOURLY').hidden 			= false;
@@ -301,6 +339,8 @@
 	resolution_id = ResolutionID.DAILY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "יומי";
+	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById('B_MONTHLY').hidden 		= false;
 	document.getElementById('B_WEEKLY').hidden 			= false;
 	document.getElementById('B_DAILY').hidden 			= true;
 	document.getElementById('B_HOURLY').hidden 			= false;
@@ -314,11 +354,13 @@
 	clearInterval(intervalId);
 	resolution_id = ResolutionID.HOURLY;
 	
-	document.getElementById('RESOLUTION').textContent = "שעתי";
-	document.getElementById('B_WEEKLY').hidden 		= false;
-	document.getElementById('B_DAILY').hidden 		= false;
-	document.getElementById('B_HOURLY').hidden 		= true;
-	document.getElementById('B_MINUTELY').hidden 	= false;
+	document.getElementById('RESOLUTION').textContent 	= "שעתי";
+	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById('B_MONTHLY').hidden 		= false;
+	document.getElementById('B_WEEKLY').hidden 			= false;
+	document.getElementById('B_DAILY').hidden 			= false;
+	document.getElementById('B_HOURLY').hidden 			= true;
+	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
 	intervalId = setInterval(update, refresh_frequency);
@@ -328,11 +370,13 @@
 	clearInterval(intervalId);
 	resolution_id = ResolutionID.MINUTELY;
 	
-	document.getElementById('RESOLUTION').textContent = "עכשיו";
-	document.getElementById('B_WEEKLY').hidden 		= false;
-	document.getElementById('B_DAILY').hidden 		= false;
-	document.getElementById('B_HOURLY').hidden 		= false;
-	document.getElementById('B_MINUTELY').hidden 	= true;
+	document.getElementById('RESOLUTION').textContent 	= "עכשיו";
+	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById('B_MONTHLY').hidden 		= false;
+	document.getElementById('B_WEEKLY').hidden 			= false;
+	document.getElementById('B_DAILY').hidden 			= false;
+	document.getElementById('B_HOURLY').hidden 			= false;
+	document.getElementById('B_MINUTELY').hidden 		= true;
 	
 	update();
 	intervalId = setInterval(update, refresh_frequency);
@@ -441,6 +485,8 @@
 		case ResolutionID.HOURLY: 	text = "ממוצע 60 הדקות האחרונות"; 	break;
 		case ResolutionID.DAILY: 	text = "ממוצע 24 השעות האחרונות"; 	break;
 		case ResolutionID.WEEKLY: 	text = "ממוצע 7 היממות האחרונות"; 	break;
+		case ResolutionID.MONTHLY: 	text = "ממוצע החודש האחרון מתאריך לתאריך"; 	break;
+		case ResolutionID.YEARLY: 	text = "ממוצע 12 החודשים האחרונים"; break;
 	}
 
 	show_balloon('balloon_RESOLUTION', text);
