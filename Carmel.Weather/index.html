@@ -82,21 +82,21 @@
 		<br>
 		<br>
 		
-		<img src="temperature.png" alt="Temperature" width="200" height="200">
+		<img id="T_IMAGE" src="temperature.png" alt="Temperature" width="200" height="200">
 		<div id="TEMPERATURE" 	style="color:red; font-size:48px; height:48px"><strong>wait</strong></div>
 		<div id="T_RANGE"	  	style="color:red; font-size:32px; height:32px"></div>
 		
 		<div style="font-size:32px;"><p></p></div>
 		
 		
-		<img src="humidity.png" alt="Humidity" width="200" height="200">
+		<img id="H_IMAGE" src="humidity.png" alt="Humidity" width="200" height="200">
 		<div id="HUMIDITY" 		style="color:#2196f3; font-size:48px; height:48px"><strong>wait</strong></div> 
 		<div id="H_RANGE"	  	style="color:#2196f3; font-size:32px; height:32px"></div>
 		
 		<div style="font-size:32px;"><p></p></div>
 		
 		
-		<img src="wind.png" alt="Wind" width="200" height="200">
+		<img id="W_IMAGE" src="wind.png" alt="Wind" width="200" height="200">
 		<div id="WIND" 			style="color:#b8cfec; font-size:48px; height:48px"><strong>wait</strong></div>
 		<div id="W_RANGE"	  	style="color:#b8cfec; font-size:32px; height:32px"></div>
 
@@ -106,12 +106,13 @@
 
 		<center>
 			<div style="center">
-			  <button id="B_YEARLY" 	onclick="onYearly()" 		style="width:140px;margin:10px;"><font size="120">שנתי</font></button>
-			  <button id="B_MONTHLY" 	onclick="onMonthly()" 		style="width:140px;margin:10px;"><font size="120">חודשי</font></button>
-			  <button id="B_WEEKLY" 	onclick="onWeekly()" 		style="width:140px;margin:10px;"><font size="120">שבועי</font></button>
-			  <button id="B_DAILY" 		onclick="onDaily()"  		style="width:140px;margin:10px;"><font size="120">יומי</font></button>
-			  <button id="B_HOURLY" 	onclick="onHourly()" 		style="width:140px;margin:10px;"><font size="120">שעתי</font></button>
-			  <button id="B_MINUTELY" 	onclick="onMinutely()" 		style="width:140px;margin:10px;"><font size="120">עכשיו</font></button>
+			  <button id="B_RECORDS" 	onclick="onRecords()" 		style="width:125px;margin:5px;"><font size="120">שיאים</font></button>
+			  <button id="B_YEARLY" 	onclick="onYearly()" 		style="width:125px;margin:5px;"><font size="120">שנתי</font></button>
+			  <button id="B_MONTHLY" 	onclick="onMonthly()" 		style="width:125px;margin:5px;"><font size="120">חודשי</font></button>
+			  <button id="B_WEEKLY" 	onclick="onWeekly()" 		style="width:125px;margin:5px;"><font size="120">שבועי</font></button>
+			  <button id="B_DAILY" 		onclick="onDaily()"  		style="width:125px;margin:5px;"><font size="120">יומי</font></button>
+			  <button id="B_HOURLY" 	onclick="onHourly()" 		style="width:125px;margin:5px;"><font size="120">שעתי</font></button>
+			  <button id="B_MINUTELY" 	onclick="onMinutely()" 		style="width:125px;margin:5px;"><font size="120">עכשיו</font></button>
 			</div>
 		</center>
 
@@ -146,15 +147,21 @@
 	DAILY	: 'Daily',
 	WEEKLY 	: 'Weekly',
     MONTHLY : 'Monthly',
-	YEARLY  : 'Yearly' };
+	YEARLY  : 'Yearly',
+	RECORDS : 'Records' };
+
 	
   let resolution_id = ResolutionID.MINUTELY;
   intervalId = 0;
   blinkerId  = 0;
   
+  atLeastOneYearOld = false;
+
   const refresh_frequency = 10 * 1000;
   var up_to_date = true;
   
+  let hold_H_IMAGE_src = document.getElementById("H_IMAGE").src;
+
   function get_trend_char(trend_text, idx)  {
     if(trend_text != null && trend_text != "")
     {
@@ -208,12 +215,16 @@
 		elem.textContent = localDateTimeString;
   }
   
+  function get_database_path(sub_path)	{
+	return "Carmel/Data/" + sub_path;
+  }
+
   function _update() {
 	clearInterval(blinkerId);
 	
-	resolution = "Carmel/Data/" + resolution_id;
+	path = get_database_path(resolution_id);
 	
-    database.ref(resolution).once('value', function(snapshot) {
+    database.ref(path).once('value', function(snapshot) {
         if (!snapshot.exists()) 
         {
           no_data();
@@ -288,11 +299,54 @@
 	setBackgroundColor();
   }
   
+  function onRecords()	{
+	clearInterval(intervalId);
+	resolution_id = ResolutionID.YEARLY;
+	
+	document.getElementById('RESOLUTION').textContent 	= "שיאים";
+	document.getElementById('B_RECORDS').hidden 		= true;
+	if(atLeastOneYearOld) document.getElementById('B_YEARLY').hidden = false;
+	document.getElementById('B_MONTHLY').hidden 		= false;
+	document.getElementById('B_WEEKLY').hidden 			= false;
+	document.getElementById('B_DAILY').hidden 			= false;
+	document.getElementById('B_HOURLY').hidden 			= false;
+	document.getElementById('B_MINUTELY').hidden 		= false;
+	
+	path = get_database_path("Records");
+	database.ref(path).once('value', function(snapshot) {
+        if (!snapshot.exists()) 
+        {
+          no_data();
+          return;
+        }
+
+        val = snapshot.val();
+
+        first_update = Number(UTC_text);
+        var created_at = new Date(first_update);
+
+		atLeastOneYearOld = isAtLeastOneYearOld(created_at);
+		if(!atLeastOneYearOld)
+			document.getElementById('B_YEARLY').hidden = true;
+
+		document.getElementById('TEMPERATURE').textContent 	= val["Maximum temperature"].Value; 
+		document.getElementById('T_RANGE').textContent 		= new Date(Number(val["Maximum temperature"].timestamp)).toLocaleString('it-IT'); 
+		document.getElementById('HUMIDITY').textContent    	= val["Minimum temperature"].Value; 
+		document.getElementById('H_RANGE').textContent 		= new Date(Number(val["Minimum temperature"].timestamp)).toLocaleString('it-IT');
+		document.getElementById('WIND').textContent        	= val["Maximum wind speed"].Value; ;
+		document.getElementById('W_RANGE').textContent 		= new Date(Number(val["Maximum wind speed"].timestamp)).toLocaleString('it-IT');; 
+	});
+	//update();
+	//intervalId = setInterval(update, 10000);
+  }
+
   function onYearly()	{
 	clearInterval(intervalId);
 	resolution_id = ResolutionID.YEARLY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "שנתי";
+	document.getElementById("H_IMAGE").src = hold_H_IMAGE_src;
+	document.getElementById('B_RECORDS').hidden 		= false;
 	document.getElementById('B_YEARLY').hidden 			= true;
 	document.getElementById('B_MONTHLY').hidden 		= false;
 	document.getElementById('B_WEEKLY').hidden 			= false;
@@ -309,7 +363,9 @@
 	resolution_id = ResolutionID.MONTHLY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "חודשי";
-	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById("H_IMAGE").src = hold_H_IMAGE_src;
+	document.getElementById('B_RECORDS').hidden 		= false;
+	if(atLeastOneYearOld) document.getElementById('B_YEARLY').hidden = false;
 	document.getElementById('B_MONTHLY').hidden 		= true;
 	document.getElementById('B_WEEKLY').hidden 			= false;
 	document.getElementById('B_DAILY').hidden 			= false;
@@ -325,7 +381,9 @@
 	resolution_id = ResolutionID.WEEKLY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "שבועי";
-	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById("H_IMAGE").src = hold_H_IMAGE_src;
+	document.getElementById('B_RECORDS').hidden 		= false;
+	if(atLeastOneYearOld) document.getElementById('B_YEARLY').hidden = false;
 	document.getElementById('B_MONTHLY').hidden 		= false;
 	document.getElementById('B_WEEKLY').hidden 			= true;
 	document.getElementById('B_DAILY').hidden 			= false;
@@ -341,7 +399,9 @@
 	resolution_id = ResolutionID.DAILY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "יומי";
-	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById("H_IMAGE").src = hold_H_IMAGE_src;
+	document.getElementById('B_RECORDS').hidden 		= false;
+	if(atLeastOneYearOld) document.getElementById('B_YEARLY').hidden = false;
 	document.getElementById('B_MONTHLY').hidden 		= false;
 	document.getElementById('B_WEEKLY').hidden 			= false;
 	document.getElementById('B_DAILY').hidden 			= true;
@@ -357,7 +417,9 @@
 	resolution_id = ResolutionID.HOURLY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "שעתי";
-	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById("H_IMAGE").src = hold_H_IMAGE_src;
+	document.getElementById('B_RECORDS').hidden 		= false;
+	if(atLeastOneYearOld) document.getElementById('B_YEARLY').hidden = false;
 	document.getElementById('B_MONTHLY').hidden 		= false;
 	document.getElementById('B_WEEKLY').hidden 			= false;
 	document.getElementById('B_DAILY').hidden 			= false;
@@ -373,7 +435,9 @@
 	resolution_id = ResolutionID.MINUTELY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "עכשיו";
-	document.getElementById('B_YEARLY').hidden 			= false;
+	document.getElementById("H_IMAGE").src = hold_H_IMAGE_src;
+	document.getElementById('B_RECORDS').hidden 		= false;
+	if(atLeastOneYearOld) document.getElementById('B_YEARLY').hidden = false;
 	document.getElementById('B_MONTHLY').hidden 		= false;
 	document.getElementById('B_WEEKLY').hidden 			= false;
 	document.getElementById('B_DAILY').hidden 			= false;
@@ -435,6 +499,17 @@
 	  });
   }
 
+  function isAtLeastOneYearOld(created_at) {
+		const createdDate = new Date(created_at);
+		const now = new Date();
+
+		const oneYearLater = new Date(createdDate);
+		oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
+
+		return now >= oneYearLater;
+	}
+
+  
   function initialize() {
   // Initialize Firebase with your configuration
     //USER=smart.glauber@gmail.com
@@ -465,7 +540,32 @@
 			console.error('Sign-in error:', errorCode, errorMessage);
 		});
 	
-	onMinutely();
+	path = get_database_path("FirstUpdate");
+	database.ref(path).once('value', function(snapshot) {
+        if (!snapshot.exists()) 
+        {
+          no_data();
+          return;
+        }
+
+        val = snapshot.val();
+        UTC_text = val.UTC;
+
+        if(UTC_text == null || UTC_text == "")
+        {
+          no_data();
+          return;
+        }
+
+        first_update = Number(UTC_text);
+        var created_at = new Date(first_update);
+
+		atLeastOneYearOld = isAtLeastOneYearOld(created_at);
+		if(!atLeastOneYearOld)
+			document.getElementById('B_YEARLY').hidden = true;
+
+		onMinutely();
+	});
   }
 
   initialize();
