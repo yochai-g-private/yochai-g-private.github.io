@@ -304,6 +304,7 @@
 	resolution_id = ResolutionID.YEARLY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "שיאים";
+	document.getElementById("H_IMAGE").src = document.getElementById("T_IMAGE").src;
 	document.getElementById('B_RECORDS').hidden 		= true;
 	if(atLeastOneYearOld) document.getElementById('B_YEARLY').hidden = false;
 	document.getElementById('B_MONTHLY').hidden 		= false;
