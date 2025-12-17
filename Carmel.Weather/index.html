@@ -340,15 +340,15 @@
 		if(!atLeastOneYearOld)
 			document.getElementById('B_YEARLY').hidden = true;
 
-		document.getElementById('TEMPERATURE').textContent 	= val["Maximum temperature"].Value; 
-		document.getElementById('T_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val["Maximum temperature"].timestamp))); 
-		document.getElementById('HUMIDITY').textContent    	= val["Minimum temperature"].Value; 
-		document.getElementById('H_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val["Minimum temperature"].timestamp)));
-		document.getElementById('WIND').textContent        	= val["Maximum wind speed"].Value; ;
-		document.getElementById('W_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val["Maximum wind speed"].timestamp))); 
+		document.getElementById('TEMPERATURE').textContent 	= val.Maximum_temperature.Value; 
+		document.getElementById('T_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val.Maximum_temperature.timestamp))); 
+		document.getElementById('HUMIDITY').textContent    	= val.Minimum_temperature.Value; 
+		document.getElementById('H_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val.Minimum_temperature.timestamp)));
+		document.getElementById('WIND').textContent        	= val.Maximum_wind_speed.Value; ;
+		document.getElementById('W_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val.Maximum_wind_speed.timestamp))); 
 	});
-	//update();
-	//intervalId = setInterval(update, 10000);
+	
+	intervalId = setInterval(onRecords, 10000);
   }
 
   function onYearly()	{
