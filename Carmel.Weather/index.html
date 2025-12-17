@@ -82,6 +82,7 @@
 		<br>
 		<br>
 		
+		<img id="T_RED_IMAGE" src="temperatuRED.png" width="200" height="200" style="display: none;">
 		<img id="T_IMAGE" src="temperature.png" alt="Temperature" width="200" height="200">
 		<div id="TEMPERATURE" 	style="color:red; font-size:48px; height:48px"><strong>wait</strong></div>
 		<div id="T_RANGE"	  	style="color:red; font-size:32px; height:32px"></div>
@@ -150,10 +151,10 @@
 	YEARLY  : 'Yearly',
 	RECORDS : 'Records' };
 
-	
+  let is_night 		= false;
   let resolution_id = ResolutionID.MINUTELY;
-  intervalId = 0;
-  blinkerId  = 0;
+  intervalId 		= 0;
+  blinkerId  		= 0;
   
   atLeastOneYearOld = false;
 
@@ -299,12 +300,21 @@
 	setBackgroundColor();
   }
   
+  function getDateAndTimeString(d)	{
+	const date = d.toLocaleDateString('en-IL');
+	const time = d.toLocaleTimeString('en-IL');
+
+	const result = `${date} ${time}`;
+
+	return result;
+  }
+
   function onRecords()	{
 	clearInterval(intervalId);
 	resolution_id = ResolutionID.YEARLY;
 	
 	document.getElementById('RESOLUTION').textContent 	= "שיאים";
-	document.getElementById("H_IMAGE").src = document.getElementById("T_IMAGE").src;
+	document.getElementById("H_IMAGE").src = document.getElementById("T_RED_IMAGE").src;
 	document.getElementById('B_RECORDS').hidden 		= true;
 	if(atLeastOneYearOld) document.getElementById('B_YEARLY').hidden = false;
 	document.getElementById('B_MONTHLY').hidden 		= false;
@@ -331,11 +341,11 @@
 			document.getElementById('B_YEARLY').hidden = true;
 
 		document.getElementById('TEMPERATURE').textContent 	= val["Maximum temperature"].Value; 
-		document.getElementById('T_RANGE').textContent 		= new Date(Number(val["Maximum temperature"].timestamp)).toLocaleString('it-IT'); 
+		document.getElementById('T_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val["Maximum temperature"].timestamp))); 
 		document.getElementById('HUMIDITY').textContent    	= val["Minimum temperature"].Value; 
-		document.getElementById('H_RANGE').textContent 		= new Date(Number(val["Minimum temperature"].timestamp)).toLocaleString('it-IT');
+		document.getElementById('H_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val["Minimum temperature"].timestamp)));
 		document.getElementById('WIND').textContent        	= val["Maximum wind speed"].Value; ;
-		document.getElementById('W_RANGE').textContent 		= new Date(Number(val["Maximum wind speed"].timestamp)).toLocaleString('it-IT');; 
+		document.getElementById('W_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val["Maximum wind speed"].timestamp))); 
 	});
 	//update();
 	//intervalId = setInterval(update, 10000);
