@@ -156,6 +156,7 @@
   intervalId 		= 0;
   blinkerId  		= 0;
   
+  created_at = new Date();
   atLeastOneYearOld = false;
 
   const refresh_frequency = 10 * 1000;
@@ -311,7 +312,7 @@
 
   function onRecords()	{
 	clearInterval(intervalId);
-	resolution_id = ResolutionID.YEARLY;
+	resolution_id = ResolutionID.RECORDS;
 	
 	document.getElementById('RESOLUTION').textContent 	= "שיאים";
 	document.getElementById('UPDATED_AT').textContent 	= "-";
@@ -570,7 +571,7 @@
         }
 
         first_update = Number(UTC_text);
-        var created_at = new Date(first_update);
+        created_at = new Date(first_update);
 
 		atLeastOneYearOld = isAtLeastOneYearOld(created_at);
 		if(!atLeastOneYearOld)
@@ -595,12 +596,14 @@
 	text = "?";
 	switch(resolution_id)
 	{
-		case ResolutionID.MINUTELY: text = "ממוצע הדקה האחרונה"; 		break;
-		case ResolutionID.HOURLY: 	text = "ממוצע 60 הדקות האחרונות"; 	break;
-		case ResolutionID.DAILY: 	text = "ממוצע 24 השעות האחרונות"; 	break;
-		case ResolutionID.WEEKLY: 	text = "ממוצע 7 היממות האחרונות"; 	break;
-		case ResolutionID.MONTHLY: 	text = "ממוצע החודש האחרון מתאריך לתאריך"; 	break;
-		case ResolutionID.YEARLY: 	text = "ממוצע 12 החודשים האחרונים"; break;
+		case ResolutionID.MINUTELY: text = "ממוצע הדקה האחרונה"; 					break;
+		case ResolutionID.HOURLY: 	text = "ממוצע 60 הדקות האחרונות"; 				break;
+		case ResolutionID.DAILY: 	text = "ממוצע 24 השעות האחרונות"; 				break;
+		case ResolutionID.WEEKLY: 	text = "ממוצע 7 היממות האחרונות"; 				break;
+		case ResolutionID.MONTHLY: 	text = "ממוצע החודש האחרון מתאריך לתאריך"; 	   break;
+		case ResolutionID.YEARLY: 	text = "ממוצע 12 החודשים האחרונים"; 			break;
+		case ResolutionID.RECORDS:
+			text = "שיאים שנמדדו החל מ-" + created_at.toLocaleDateString('en-IL');	break;
 	}
 
 	show_balloon('balloon_RESOLUTION', text);
