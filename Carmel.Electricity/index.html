@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head> 
+	<title> 
+		הפסקות חשמל במושב כרמל 
+	</title> 
+	<!--link rel="icon" type="image/x-icon" sizes="16x16" href="favicon.ico"-->
+	<link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* Initially hide the body */
+        body {
+            display: none;
+        }
+		
+        /* Balloon container styling */
+        .balloon-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Balloon content styling */
+        .balloon-content {
+			font-size: 32px;
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+			/*max-width: 1200px;*/
+			top: -30px;
+            width: 500px;
+        }
+
+        /* Balloon arrow styling */
+        .balloon-content::after {
+           content: "";
+            position: absolute;
+            top: 100%; /* Adjusted to point downwards */
+            left: 50%;
+            margin-left: -10px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: #f9f9f9 transparent transparent transparent;
+        }
+		
+    </style>
+</head> 
+
+<body style="height: 100%">
+	<style>
+	
+    body {
+      background-image: url('LOGO.png');
+	  opacity: 1;
+      background-size: 130% 80%;
+      background-position: top center;
+      background-repeat: no-repeat;
+ 	  background-attachment: fixed;
+      background-color: #ffffff; /*#000000;*/ /*#f0f0f0;*/
+    }
+	</style>
+	<div style = "text-align:center;">
+		<h1 id="CARMEL" style="font-size:160px;margin-bottom: 0; opacity: 1">כרמל</h1>
+		<div class="balloon-container">
+			<!-- Balloon content -->
+			<div id="balloon_RESOLUTION" class="balloon-content"></div>
+			<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"  onmouseover="show_balloon_RESOLUTION()" onmouseout="hide_balloon_RESOLUTION()"></h2>
+		</div>		
+		<br>
+		<br>
+		<div class="balloon-container">
+			<!-- Balloon content -->
+			<div id="balloon_UPDATED_AT" class="balloon-content"></div>
+			<div id="UPDATED_AT" style="font-size:48px;margin-top: 0; " onmouseover="show_balloon_UPDATED_AT()" onmouseout="hide_balloon_UPDATED_AT()">wait</div>
+		</div>		
+
+		<br>
+		<br>
+		<br>
+		<br>
+				
+		<div style="font-size:32px;"><p></p></div>
+				
+		<div style="font-size:32px;"><p></p></div>
+		
+		<br><br>
+		<br><br>
+		
+		<br>
+
+		<div style="display: flex; justify-content: space-between; font-size:60px;">
+			<div  style="display: flex; justify-content: space-between;">
+				<img src="sunset.png" alt="Wind" width="110" height="95">
+				<div id="SUNSET" >.</div>
+			</div>
+			<div  style="display: flex; justify-content: space-between;">
+				<div id="SUNRISE">.</div>
+				<img src="sunrise.png" alt="Wind" width="110" height="95">
+			</div>
+		</div>		
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script>
+
+  var database;
+
+  let is_night 		= false;
+  intervalId 		= 0;
+  blinkerId  		= 0;
+  
+  created_at = new Date();
+
+  const refresh_frequency = 10 * 1000;
+  var up_to_date = true;
+  
+  var localDateTimeString;
+  
+  function blink()
+  {
+	elem = document.getElementById('UPDATED_AT');
+	if(elem.textContent == localDateTimeString)
+		elem.textContent = 'לא עדכני';
+	else
+		elem.textContent = localDateTimeString;
+  }
+  
+  function get_database_path(sub_path)	{
+	return "Hashmal/" + sub_path;
+  }
+
+  function _update() {
+	clearInterval(blinkerId);
+	
+	path = get_database_path("Current");
+
+	database.ref(path).once('value', function(snapshot) {
+        if (!snapshot.exists()) 
+        {
+          no_data();
+          return;
+        }
+
+        val = snapshot.val();
+        LocalTime_num = val.LastSeen;
+
+        if(LocalTime_num == null || LocalTime_num == "")
+        {
+          no_data();
+          return;
+        }
+
+        last_update = Number(LocalTime_num) * 1000;
+
+		last_update ;
+        var updated_at = new Date(last_update);
+
+        const year = updated_at.getFullYear();
+        const month = updated_at.getMonth() + 1; // Months are zero-based
+        const day = updated_at.getDate();
+        const hours = updated_at.getHours();
+        const minutes = updated_at.getMinutes();
+        const seconds = updated_at.getSeconds();
+
+        // Create a formatted string
+        localDateTimeString = `${day}-${month < 10 ? '0' : ''}${month}-${year} ${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+		now_t = new Date().getTime() + ((3600 * 2) * 1000);
+		upd_t = updated_at.getTime();
+		
+		const timeDifference = (now_t - upd_t) / 1000;
+		
+		console.log('timeDifference: ', timeDifference);
+		
+		max_timeDifference = 60;
+		max_timeDifference += 15;	// tolerance
+		
+		not_up_to_date = (max_timeDifference < timeDifference);
+		
+		if(not_up_to_date)	
+			blinkerId = setInterval(blink, 2000);
+
+        document.getElementById('UPDATED_AT').style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
+        document.getElementById('UPDATED_AT').textContent = localDateTimeString;
+		});
+  }
+
+  function update() {
+	_update();
+	setBackgroundColor();
+  }
+  
+  function getDateAndTimeString(d)	{
+	const date = d.toLocaleDateString('en-IL');
+	const time = d.toLocaleTimeString('en-IL');
+
+	const result = `${date} ${time}`;
+
+	return result;
+  }
+
+  function setBackgroundColor() {
+    const apiUrl = `https://api.sunrise-sunset.org/json?lat=31.424836&lng=35.182815&formatted=0&tzid=UTC`;
+
+  // Fetch the sunset data
+    fetch(apiUrl)
+	  .then(response => response.json())
+	  .then(data => {
+		sunset = new Date(data.results.sunset);
+		sunrise = new Date(data.results.sunrise);
+		now = new Date();
+		//now.setHours(2, 0, 0);
+		is_night = now >= sunset || now < sunrise;
+//		is_night = true;
+		sunset_s  = sunset.toLocaleTimeString('it-IT');
+		sunrise_s = sunrise.toLocaleTimeString('it-IT');
+
+		e_SUNSET  = document.getElementById('SUNSET');
+		e_SUNRISE = document.getElementById('SUNRISE');
+
+		if(is_night)
+		{
+			e_SUNSET.style.color  = 'white';
+			e_SUNRISE.style.color = 'white';
+		}
+		else
+		{
+			e_SUNSET.style.color  = 'black';
+			e_SUNRISE.style.color = 'black';
+		}
+
+		e_SUNSET.textContent  = sunset_s;
+		e_SUNRISE.textContent = sunrise_s;
+
+		console.log('Sunrise time:', sunrise_s);
+		console.log('Sunset time:',  sunset_s);
+		console.log('NOW:', now.toLocaleTimeString());
+		console.log('Is night:', is_night);
+		//is_night = true;
+		document.body.style.backgroundColor = (is_night) ? "#404040" : "#ffffff";
+		document.body.style.display = "block";
+
+		document.getElementById('CARMEL').style.color 	  = (is_night) ? 'white' : 'black';
+		document.getElementById('RESOLUTION').style.color = (is_night) ? 'white' : 'black';
+        document.getElementById('UPDATED_AT').style.color = (is_night) ? 'white' : 'black';
+	})
+	  .catch(error => {
+	    console.error('Error fetching sunset time:', error);
+	  });
+  }
+
+  function initialize() {
+  // Initialize Firebase with your configuration
+    //USER=smart.glauber@gmail.com
+	//PASS=Carmel/ElectricityWEB
+	const firebaseConfig = {
+	apiKey: "AIzaSyDt-ox1U0OzmXSE2iHT3r7IXfoB-QC2jAc",
+	authDomain: "system-14f28.firebaseapp.com",
+	databaseURL: "https://system-14f28-default-rtdb.europe-west1.firebasedatabase.app",
+	projectId: "system-14f28",
+	storageBucket: "system-14f28.firebasestorage.app",
+	messagingSenderId: "465688970634",
+	appId: "1:465688970634:web:43d1361db2f8afff303473",
+	measurementId: "G-TWSD8BHZBC"
+	};
+
+	firebase.initializeApp(firebaseConfig);
+    database = firebase.database();
+	
+	firebase.auth().signInWithEmailAndPassword('smart.glauber@gmail.com', 'Carmel/ElectricityWEB')
+		.then((userCredential) => {
+			// Signed in
+			const user = userCredential.user;
+			console.log('User signed in:', user);
+			// Perform actions after successful sign-in
+		})
+		.catch((error) => {
+			const errorCode = error.code;
+			const errorMessage = error.message;
+			console.error('Sign-in error:', errorCode, errorMessage);
+		});
+  }
+
+  initialize();
+
+  function Update()	{
+	clearInterval(intervalId);
+	update();
+	intervalId = setInterval(update, refresh_frequency);
+  }
+
+  Update();
+
+  function show_balloon(id, text)	{
+	elem = document.getElementById(id);
+	elem.textContent   = text;
+	elem.style.display = 'block';
+	elem.style.width = 'auto';
+	var contentWidth = elem.offsetWidth;
+    elem.style.width = contentWidth + 'px';
+  }
+  
+  function show_balloon_RESOLUTION()	{
+	text = "?";
+/*	
+	switch(resolution_id)
+	{
+		case ResolutionID.MINUTELY: text = "ממוצע הדקה האחרונה"; 					break;
+		case ResolutionID.HOURLY: 	text = "ממוצע 60 הדקות האחרונות"; 				break;
+		case ResolutionID.DAILY: 	text = "ממוצע 24 השעות האחרונות"; 				break;
+		case ResolutionID.WEEKLY: 	text = "ממוצע 7 היממות האחרונות"; 				break;
+		case ResolutionID.MONTHLY: 	text = "ממוצע החודש האחרון מתאריך לתאריך"; 	   break;
+		case ResolutionID.YEARLY: 	text = "ממוצע 12 החודשים האחרונים"; 			break;
+		case ResolutionID.RECORDS:
+			text = "שיאים שנמדדו החל מ-" + created_at.toLocaleDateString('en-IL');	break;
+	}
+*/
+	show_balloon('balloon_RESOLUTION', text);
+  }
+
+  function hide_balloon_RESOLUTION()	{
+	document.getElementById('balloon_RESOLUTION').style.display = 'none';
+  }
+  
+  function show_balloon_UPDATED_AT()	{
+	show_balloon('balloon_UPDATED_AT', "מועד העדכון האחרון");
+	}
+
+  function hide_balloon_UPDATED_AT()	{
+	document.getElementById('balloon_UPDATED_AT').style.display = 'none';
+  }
+</script>
+</div>
+</body>
+</html>

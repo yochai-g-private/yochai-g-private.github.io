@@ -1,0 +1,42 @@
+<!DOCTYPE html> 
+<html> 
+
+<head> 
+	<title> 
+		How to change opacity of 
+		background image in CSS ? 
+	</title> 
+
+	<style> 
+		#GFG { 
+			height: 100vh; 
+			display: flex; 
+			align-items: center; 
+			justify-content: center; 
+		} 
+
+		#GFG::before { 
+			content: ""; 
+			position: absolute; 
+			top: 0px; 
+			right: 0px; 
+			bottom: 0px; 
+			left: 0px; 
+
+			/* Specify the background image to be used */ 
+			background-image: url('LOGO.png'); 
+			background-size: cover; 
+
+			/* Specify the background image */ 
+			opacity: 0.2; 
+		} 
+	</style> 
+</head> 
+
+<body> 
+	<div id="GFG"> 
+		<h2>Background image with opacity</h2> 
+	</div> 
+</body> 
+
+</html> 
