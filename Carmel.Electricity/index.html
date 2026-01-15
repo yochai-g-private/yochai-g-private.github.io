@@ -66,8 +66,8 @@
 		<h1 id="CARMEL" style="font-size:160px;margin-bottom: 0; opacity: 1">כרמל</h1>
 		<div class="balloon-container">
 			<!-- Balloon content -->
-			<div id="balloon_RESOLUTION" class="balloon-content"></div>
-			<h2 id="RESOLUTION" style="font-size:128px; height:128px; margin-top: 0;margin-bottom: 0"  onmouseover="show_balloon_RESOLUTION()" onmouseout="hide_balloon_RESOLUTION()"></h2>
+			<div id="balloon_STATUS" class="balloon-content"></div>
+			<h2 id="STATUS" style="font-size:64px; height:64px; margin-top: 0;margin-bottom: 0"  onmouseover="show_balloon_STATUS()" onmouseout="hide_balloon_STATUS()"></h2>
 		</div>		
 		<br>
 		<br>
@@ -107,7 +107,7 @@
 <script>
 
   var database;
-
+  let not_up_to_date= false;
   let is_night 		= false;
   intervalId 		= 0;
   blinkerId  		= 0;
@@ -121,6 +121,7 @@
   
   function blink()
   {
+	return;
 	elem = document.getElementById('UPDATED_AT');
 	if(elem.textContent == localDateTimeString)
 		elem.textContent = 'לא עדכני';
@@ -153,9 +154,11 @@
           return;
         }
 
-        last_update = Number(LocalTime_num) * 1000;
+        last_update = Number(LocalTime_num);
 
-		last_update ;
+		last_update -= 3600 * 2;
+		last_update *= 1000;
+
         var updated_at = new Date(last_update);
 
         const year = updated_at.getFullYear();
@@ -168,24 +171,29 @@
         // Create a formatted string
         localDateTimeString = `${day}-${month < 10 ? '0' : ''}${month}-${year} ${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-		now_t = new Date().getTime() + ((3600 * 2) * 1000);
+		now_t = new Date().getTime();// + ((3600 * 2) * 1000);
 		upd_t = updated_at.getTime();
 		
 		const timeDifference = (now_t - upd_t) / 1000;
 		
 		console.log('timeDifference: ', timeDifference);
 		
-		max_timeDifference = 60;
-		max_timeDifference += 15;	// tolerance
+		max_timeDifference  = 60;
+		max_timeDifference *= 1.25;	// tolerance
 		
 		not_up_to_date = (max_timeDifference < timeDifference);
 		
-		if(not_up_to_date)	
-			blinkerId = setInterval(blink, 2000);
+//		if(not_up_to_date)	
+//			blinkerId = setInterval(blink, 2000);
 
-        document.getElementById('UPDATED_AT').style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
-        document.getElementById('UPDATED_AT').textContent = localDateTimeString;
-		});
+		e_UPDATED_AT = document.getElementById('UPDATED_AT');
+        e_UPDATED_AT.style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
+        e_UPDATED_AT.textContent = localDateTimeString;
+
+		e_STATUS = document.getElementById('STATUS');
+        e_STATUS.style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
+        e_STATUS.textContent = (not_up_to_date) ? 'הפסקת חשמל' : 'הכל תקין';
+	});
   }
 
   function update() {
@@ -244,8 +252,8 @@
 		document.body.style.display = "block";
 
 		document.getElementById('CARMEL').style.color 	  = (is_night) ? 'white' : 'black';
-		document.getElementById('RESOLUTION').style.color = (is_night) ? 'white' : 'black';
-        document.getElementById('UPDATED_AT').style.color = (is_night) ? 'white' : 'black';
+		document.getElementById('STATUS').style.color 	  = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
+        document.getElementById('UPDATED_AT').style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
 	})
 	  .catch(error => {
 	    console.error('Error fetching sunset time:', error);
@@ -303,7 +311,7 @@
     elem.style.width = contentWidth + 'px';
   }
   
-  function show_balloon_RESOLUTION()	{
+  function show_balloon_STATUS()	{
 	text = "?";
 /*	
 	switch(resolution_id)
@@ -318,11 +326,11 @@
 			text = "שיאים שנמדדו החל מ-" + created_at.toLocaleDateString('en-IL');	break;
 	}
 */
-	show_balloon('balloon_RESOLUTION', text);
+	show_balloon('balloon_STATUS', text);
   }
 
-  function hide_balloon_RESOLUTION()	{
-	document.getElementById('balloon_RESOLUTION').style.display = 'none';
+  function hide_balloon_STATUS()	{
+	document.getElementById('balloon_STATUS').style.display = 'none';
   }
   
   function show_balloon_UPDATED_AT()	{
