@@ -504,8 +504,8 @@
 		document.body.style.display = "block";
 
 		document.getElementById('CARMEL').style.color 	  = (is_night) ? 'white' : 'black';
-		document.getElementById('RESOLUTION').style.color = (is_night) ? 'white' : 'black';
-        document.getElementById('UPDATED_AT').style.color = (is_night) ? 'white' : 'black';
+		document.getElementById('RESOLUTION').style.color 	  = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
+        document.getElementById('UPDATED_AT').style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
 	})
 	  .catch(error => {
 	    console.error('Error fetching sunset time:', error);

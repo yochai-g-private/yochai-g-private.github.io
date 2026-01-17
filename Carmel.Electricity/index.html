@@ -114,7 +114,10 @@
   
   created_at = new Date();
 
-  const refresh_frequency = 10 * 1000;
+  const UPDATE_FREQUENCY_SECONDS = 20;
+
+  //const refresh_frequency = (UPDATE_FREQUENCY_SECONDS / 2) * 1000;
+  var refresh_frequency = 0;
   var up_to_date = true;
   
   var localDateTimeString;
@@ -161,10 +164,10 @@
 
         var updated_at = new Date(last_update);
 
-        const year = updated_at.getFullYear();
-        const month = updated_at.getMonth() + 1; // Months are zero-based
-        const day = updated_at.getDate();
-        const hours = updated_at.getHours();
+        const year    = updated_at.getFullYear();
+        const month   = updated_at.getMonth() + 1; // Months are zero-based
+        const day     = updated_at.getDate();
+        const hours   = updated_at.getHours();
         const minutes = updated_at.getMinutes();
         const seconds = updated_at.getSeconds();
 
@@ -176,10 +179,15 @@
 		
 		const timeDifference = (now_t - upd_t) / 1000;
 		
+		now_t_seconds 		= now_t / 1000;
+		upd_t_seconds 		= upd_t / 1000;
+		next_upd_t_seconds	= upd_t_seconds + UPDATE_FREQUENCY_SECONDS + 1;
+		refresh_frequency 	= (next_upd_t_seconds - now_t_seconds) * 1000;
+
 		console.log('timeDifference: ', timeDifference);
 		
-		max_timeDifference  = 60;
-		max_timeDifference *= 1.25;	// tolerance
+		max_timeDifference  = UPDATE_FREQUENCY_SECONDS;
+		max_timeDifference += max_timeDifference / 2;	// tolerance
 		
 		not_up_to_date = (max_timeDifference < timeDifference);
 		
@@ -187,11 +195,11 @@
 //			blinkerId = setInterval(blink, 2000);
 
 		e_UPDATED_AT = document.getElementById('UPDATED_AT');
-        e_UPDATED_AT.style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
+        e_UPDATED_AT.style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'darkblue';
         e_UPDATED_AT.textContent = localDateTimeString;
 
 		e_STATUS = document.getElementById('STATUS');
-        e_STATUS.style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
+        e_STATUS.style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'darkblue';
         e_STATUS.textContent = (not_up_to_date) ? 'הפסקת חשמל' : 'הכל תקין';
 	});
   }
@@ -252,8 +260,8 @@
 		document.body.style.display = "block";
 
 		document.getElementById('CARMEL').style.color 	  = (is_night) ? 'white' : 'black';
-		document.getElementById('STATUS').style.color 	  = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
-        document.getElementById('UPDATED_AT').style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'black';
+		document.getElementById('STATUS').style.color 	  = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'darkblue';
+        document.getElementById('UPDATED_AT').style.color = (not_up_to_date) ? 'red' : (is_night) ? 'white' : 'darkblue';
 	})
 	  .catch(error => {
 	    console.error('Error fetching sunset time:', error);
