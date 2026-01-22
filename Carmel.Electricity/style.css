@@ -14,10 +14,10 @@
 
 #LIST th,
 #LIST td {
-  border: 1px solid #aaa;
+  border: 1px solid #fa0606;
   padding: 4px;
   text-align: center;
-  font-size: 14px;
+  font-size: 32px;
 }
 
 /* Column widths */
@@ -25,12 +25,12 @@
 #LIST td:nth-child(1),
 #LIST th:nth-child(2),
 #LIST td:nth-child(2) {
-  width: 234px;
+  width: 280px;
 }
 
 #LIST th:nth-child(3),
 #LIST td:nth-child(3) {
-  width: 123px;
+  width: 200px;
 }
 
 /* Force fixed row height */
