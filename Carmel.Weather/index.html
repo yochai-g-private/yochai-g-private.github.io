@@ -167,10 +167,11 @@
 	YEARLY  : 'Yearly',
 	RECORDS : 'Records' };
 
-  let is_night 		= false;
-  let resolution_id = ResolutionID.MINUTELY;
-  intervalId 		= 0;
-  blinkerId  		= 0;
+  let is_night 		 = false;
+  let not_up_to_date = false;
+  let resolution_id  = ResolutionID.MINUTELY;
+  intervalId 		 = 0;
+  blinkerId  		 = 0;
   
   created_at = new Date();
   atLeastOneYearOld = false;
@@ -279,9 +280,10 @@
 	next_upd_t_seconds	= upd_t_seconds + (UPDATE_FREQUENCY_SECONDS * 2) + 1;
 
 	refresh_frequency 	= (next_upd_t_seconds - now_t_seconds) * 1000;
+	if(refresh_frequency < 0)
+		refresh_frequency = UPDATE_FREQUENCY_SECONDS;
 
 	const timeDifference = (now_t - upd_t) / 1000;
-	console.log('timeDifference: ', timeDifference);
 		
 	max_timeDifference = UPDATE_FREQUENCY_SECONDS;
 	
@@ -293,11 +295,18 @@
 		case ResolutionID.YEARLY:  max_timeDifference = 86400 * 31;	break;
 	}
 	
-	max_timeDifference += 75;//refresh_frequency / 1000;
-	
-	console.log('timeDifference: ', timeDifference);
+	max_timeDifference += 10;//refresh_frequency / 1000;
 	
 	not_up_to_date = (max_timeDifference < timeDifference);
+
+	console.log('timeDifference    : ', timeDifference);
+	console.log('max_timeDifference: ', max_timeDifference);
+	console.log('not_up_to_date    : ', not_up_to_date);
+	console.log('now_t_seconds     : ', now_t_seconds);
+	console.log('upd_t_seconds     : ', upd_t_seconds);
+	console.log('next_upd_t_seconds: ', next_upd_t_seconds);
+	console.log('refresh_frequency: ',  refresh_frequency / 1000);
+	
 	//up_to_date = false;
 	
 	if(not_up_to_date)	

@@ -199,6 +199,8 @@
 	next_upd_t_seconds	= upd_t_seconds + (UPDATE_FREQUENCY_SECONDS * 2) + 1;
 
 	refresh_frequency 	= (next_upd_t_seconds - now_t_seconds) * 1000;
+	if(refresh_frequency < 0)
+		refresh_frequency = UPDATE_FREQUENCY_SECONDS;
 
 	const timeDifference = (now_t - upd_t) / 1000;
 	
