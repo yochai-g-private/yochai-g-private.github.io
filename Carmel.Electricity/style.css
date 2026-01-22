@@ -1,0 +1,39 @@
+#LIST {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 591px; /* 234 + 234 + 123 */
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+#LIST caption {
+  caption-side: top;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+#LIST th,
+#LIST td {
+  border: 1px solid #aaa;
+  padding: 4px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Column widths */
+#LIST th:nth-child(1),
+#LIST td:nth-child(1),
+#LIST th:nth-child(2),
+#LIST td:nth-child(2) {
+  width: 234px;
+}
+
+#LIST th:nth-child(3),
+#LIST td:nth-child(3) {
+  width: 123px;
+}
+
+/* Force fixed row height */
+#LIST tbody tr {
+  height: 36px;   /* adjust if needed */
+}
