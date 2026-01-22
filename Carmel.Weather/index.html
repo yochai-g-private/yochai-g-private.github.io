@@ -178,7 +178,7 @@
 
   //const refresh_frequency = 10 * 1000;
   const UPDATE_FREQUENCY_SECONDS = 60;
-  var refresh_frequency_seconds = 60;
+  var refresh_frequency_seconds  = UPDATE_FREQUENCY_SECONDS;
   var up_to_date = true;
   
   let hold_H_IMAGE_src = document.getElementById("H_IMAGE").src;
@@ -277,7 +277,7 @@
 	
 	now_t_seconds 		= now_t / 1000;
 	upd_t_seconds 		= upd_t / 1000;
-	next_upd_t_seconds	= upd_t_seconds + (UPDATE_FREQUENCY_SECONDS * 2) + 1;
+	next_upd_t_seconds	= upd_t_seconds + UPDATE_FREQUENCY_SECONDS + 5;
 
 	refresh_frequency_seconds = (next_upd_t_seconds - now_t_seconds);
 	if(refresh_frequency_seconds < 0)
@@ -299,13 +299,18 @@
 	
 	not_up_to_date = (max_timeDifference < timeDifference);
 
+	const date = new Date();
+	next_t = new Date(date.getTime() + refresh_frequency_seconds * 1000);
+
 	console.log('timeDifference    : ', timeDifference);
 	console.log('max_timeDifference: ', max_timeDifference);
 	console.log('not_up_to_date    : ', not_up_to_date);
 	console.log('now_t_seconds     : ', now_t_seconds);
 	console.log('upd_t_seconds     : ', upd_t_seconds);
 	console.log('next_upd_t_seconds: ', next_upd_t_seconds);
-	console.log('refresh_frequency: ',  refresh_frequency_seconds);
+	console.log('refresh_frequency : ',  refresh_frequency_seconds);
+	console.log('NOW               : ',  getDateAndTimeString(date));
+	console.log('NEXT REFRESH      : ',  getDateAndTimeString(next_t));
 	
 	//up_to_date = false;
 	
@@ -335,7 +340,10 @@
 	showLoading();
 		
     database.ref(path).once('value', function(snapshot) {
+		refresh_frequency_seconds = UPDATE_FREQUENCY_SECONDS;
 		on_data_got(snapshot);
+		clearInterval(intervalId);
+		intervalId = setInterval(update, refresh_frequency_seconds * 1000);
       });
   }
 
@@ -391,8 +399,6 @@
 		document.getElementById('WIND').textContent        	= val.Maximum_wind_speed.Value; ;
 		document.getElementById('W_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val.Maximum_wind_speed.timestamp))); 
 	});
-	
-	intervalId = setInterval(onRecords, refresh_frequency_seconds * 1000);
   }
 
   function onYearly()	{
@@ -410,7 +416,6 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
 
   function onMonthly()	{
@@ -428,7 +433,6 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function onWeekly()	{
@@ -446,7 +450,6 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function onDaily()	{
@@ -464,7 +467,6 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function onHourly()	{
@@ -482,7 +484,6 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function onMinutely()	{
@@ -500,7 +501,6 @@
 	document.getElementById('B_MINUTELY').hidden 		= true;
 	
 	update();
-	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function setBackgroundColor() {
