@@ -177,8 +177,9 @@
   created_at = new Date();
   atLeastOneYearOld = false;
 
-  const refresh_frequency = 10 * 1000;
-  //var refresh_frequency = 60 * 1000;
+  //const refresh_frequency = 10 * 1000;
+  const UPDATE_FREQUENCY_SECONDS = 60;
+  var refresh_frequency = 60 * 1000;
   var up_to_date = true;
   
   let hold_H_IMAGE_src = document.getElementById("H_IMAGE").src;
@@ -275,8 +276,15 @@
 	now_t = new Date().getTime();
 	upd_t = updated_at.getTime();
 	
+	now_t_seconds 		= now_t / 1000;
+	upd_t_seconds 		= upd_t / 1000;
+	next_upd_t_seconds	= upd_t_seconds + (UPDATE_FREQUENCY_SECONDS * 2) + 1;
+
+	refresh_frequency 	= (next_upd_t_seconds - now_t_seconds) * 1000;
+
 	const timeDifference = (now_t - upd_t) / 1000;
-	
+	console.log('timeDifference: ', timeDifference);
+		
 	max_timeDifference = 60;
 	
 	switch(resolution_id)
