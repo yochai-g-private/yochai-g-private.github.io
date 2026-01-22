@@ -136,7 +136,7 @@
 
   //const refresh_frequency = (UPDATE_FREQUENCY_SECONDS / 2) * 1000;
   //var refresh_frequency = (UPDATE_FREQUENCY_SECONDS / 2) * 1000;
-  var refresh_frequency = 60 * 1000;
+  var refresh_frequency_seconds = 60;
   var up_to_date = true;
   
   var localDateTimeString;
@@ -198,9 +198,9 @@
 	upd_t_seconds 		= upd_t / 1000;
 	next_upd_t_seconds	= upd_t_seconds + (UPDATE_FREQUENCY_SECONDS * 2) + 1;
 
-	refresh_frequency 	= (next_upd_t_seconds - now_t_seconds) * 1000;
-	if(refresh_frequency < 0)
-		refresh_frequency = UPDATE_FREQUENCY_SECONDS;
+	refresh_frequency_seconds 	= (next_upd_t_seconds - now_t_seconds);
+	if(refresh_frequency_seconds < 0)
+		refresh_frequency_seconds = UPDATE_FREQUENCY_SECONDS;
 
 	const timeDifference = (now_t - upd_t) / 1000;
 	
@@ -231,9 +231,9 @@
 	showLoading();
 	
 	database.ref(path).once('value', function(snapshot) {
-		refresh_frequency = UPDATE_FREQUENCY_SECONDS;
+		//refresh_frequency = UPDATE_FREQUENCY_SECONDS;
 		on_data_got(snapshot);
-		intervalId = setInterval(update, refresh_frequency);
+		intervalId = setInterval(update, refresh_frequency_seconds * 1000);
 	});
   }
 

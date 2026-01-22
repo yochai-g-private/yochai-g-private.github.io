@@ -178,7 +178,7 @@
 
   //const refresh_frequency = 10 * 1000;
   const UPDATE_FREQUENCY_SECONDS = 60;
-  var refresh_frequency = 60 * 1000;
+  var refresh_frequency_seconds = 60;
   var up_to_date = true;
   
   let hold_H_IMAGE_src = document.getElementById("H_IMAGE").src;
@@ -279,9 +279,9 @@
 	upd_t_seconds 		= upd_t / 1000;
 	next_upd_t_seconds	= upd_t_seconds + (UPDATE_FREQUENCY_SECONDS * 2) + 1;
 
-	refresh_frequency 	= (next_upd_t_seconds - now_t_seconds) * 1000;
-	if(refresh_frequency < 0)
-		refresh_frequency = UPDATE_FREQUENCY_SECONDS;
+	refresh_frequency_seconds = (next_upd_t_seconds - now_t_seconds);
+	if(refresh_frequency_seconds < 0)
+		refresh_frequency_seconds = UPDATE_FREQUENCY_SECONDS;
 
 	const timeDifference = (now_t - upd_t) / 1000;
 		
@@ -305,7 +305,7 @@
 	console.log('now_t_seconds     : ', now_t_seconds);
 	console.log('upd_t_seconds     : ', upd_t_seconds);
 	console.log('next_upd_t_seconds: ', next_upd_t_seconds);
-	console.log('refresh_frequency: ',  refresh_frequency / 1000);
+	console.log('refresh_frequency: ',  refresh_frequency_seconds);
 	
 	//up_to_date = false;
 	
@@ -392,7 +392,7 @@
 		document.getElementById('W_RANGE').textContent 		= getDateAndTimeString(new Date(Number(val.Maximum_wind_speed.timestamp))); 
 	});
 	
-	intervalId = setInterval(onRecords, 10000);
+	intervalId = setInterval(onRecords, refresh_frequency_seconds * 1000);
   }
 
   function onYearly()	{
@@ -410,7 +410,7 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, 10000);
+	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
 
   function onMonthly()	{
@@ -428,7 +428,7 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, 10000);
+	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function onWeekly()	{
@@ -446,7 +446,7 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, 10000);
+	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function onDaily()	{
@@ -464,7 +464,7 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, 10000);
+	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function onHourly()	{
@@ -482,7 +482,7 @@
 	document.getElementById('B_MINUTELY').hidden 		= false;
 	
 	update();
-	intervalId = setInterval(update, refresh_frequency);
+	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function onMinutely()	{
@@ -500,7 +500,7 @@
 	document.getElementById('B_MINUTELY').hidden 		= true;
 	
 	update();
-	intervalId = setInterval(update, refresh_frequency);
+	intervalId = setInterval(update, refresh_frequency_seconds * 1000);
   }
   
   function setBackgroundColor() {
