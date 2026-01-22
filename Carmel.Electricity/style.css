@@ -20,7 +20,7 @@
   border: 1px solid #fa0606;
   padding: 4px;
   text-align: center;
-  font-size: 32px;
+  font-size: 40px;
   color: #fa0606;
 }
 
@@ -30,6 +30,7 @@
 #LIST th:nth-child(2),
 #LIST td:nth-child(2) {
   width: 280px;
+  height: 80px;
 }
 
 #LIST th:nth-child(3),
