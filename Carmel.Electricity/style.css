@@ -15,14 +15,21 @@
   color: #fa0606;
 }
 
-#LIST th,
+#LIST th {
+  border: 1px solid #fa0606;
+  padding: 4px;
+  text-align: center;
+  font-size: 36px;
+  color: #fa0606;
+}
+
 #LIST td {
   border: 1px solid #fa0606;
   padding: 4px;
   text-align: center;
-  font-size: 40px;
+  font-size: 36px;
   color: #fa0606;
-  height: 100px;
+  height: 92px;
 }
 
 /* Column widths */
@@ -38,7 +45,8 @@
   width: 200px;
 }
 
-/* Force fixed row height */
+/* Force fixed row height
 #LIST tbody tr {
-  height: 48px;   /* adjust if needed */
+  height: 48px;   / * adjust if needed * /
 }
+ */
