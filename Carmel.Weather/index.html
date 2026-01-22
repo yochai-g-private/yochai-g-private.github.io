@@ -102,9 +102,7 @@
 		<div id="W_RANGE"	  	style="color:#b8cfec; font-size:32px; height:32px"></div>
 
 		<br><br>
-		<br><br>
 		
-
 		<center>
 			<div style="center">
 			  <button id="B_RECORDS" 	onclick="onRecords()" 		style="width:135px;margin:5px;"><font size="120">שיאים</font></button>
@@ -285,7 +283,7 @@
 	const timeDifference = (now_t - upd_t) / 1000;
 	console.log('timeDifference: ', timeDifference);
 		
-	max_timeDifference = 60;
+	max_timeDifference = UPDATE_FREQUENCY_SECONDS;
 	
 	switch(resolution_id)
 	{
@@ -295,7 +293,7 @@
 		case ResolutionID.YEARLY:  max_timeDifference = 86400 * 31;	break;
 	}
 	
-	max_timeDifference += 60;//refresh_frequency / 1000;
+	max_timeDifference += 75;//refresh_frequency / 1000;
 	
 	console.log('timeDifference: ', timeDifference);
 	
