@@ -7,6 +7,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, 
          ref, 
+         query,
+         orderByKey, 
+         limitToLast,
          get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import {
   getAuth,
@@ -121,20 +124,27 @@ function on_data_got(snapshot)
 	e_STATUS.textContent = (not_up_to_date) ? 'הפסקת חשמל' : 'הכל תקין';
 }
 
+var first_time = true;
+
 function _update() {
 	clearInterval(blinkerId);
 
 	let path = get_database_path("Current");
 
-	showLoading();
-
     const dataRef = ref(database, path);
     
+	showLoading();
+
 	get(dataRef).then((snapshot) => {
 		refresh_frequency_seconds = UPDATE_FREQUENCY_SECONDS;
 		on_data_got(snapshot);
 		clearInterval(intervalId);
 		intervalId = setInterval(update, refresh_frequency_seconds * 1000);
+
+        if(first_time)
+        {
+            first_time = false;
+        }
 		});
 }
 
@@ -233,6 +243,7 @@ function initialize() {
         "Carmel/ElectricityWEB")
         .then((userCredential) => {
             console.log("Signed in:", userCredential.user.uid);
+            fill_table();
             })
 		.catch((error) => {
 			show_error(error, 'Sign-in error');
@@ -242,12 +253,9 @@ function initialize() {
 initialize();
 setBackgroundColor();
 
-function Update()	{
-	clearInterval(intervalId);
-	update();
-}
-
-Update();
+clearInterval(intervalId);
+update();
+fill_table();
 
 function show_balloon(id, text)	{
 	elem = document.getElementById(id);
@@ -286,4 +294,61 @@ function show_balloon_UPDATED_AT()	{
 
 function hide_balloon_UPDATED_AT()	{
 	document.getElementById('balloon_UPDATED_AT').style.display = 'none';
+}
+
+function on_table_got(snapshot)   {
+	hideLoading();
+
+    console.log("Snapshot has children?", snapshot.hasChildren());
+    //?console.log("Children count:", snapshot.numChildren());
+
+    const items = [];
+    try {
+        snapshot.forEach((child) => {
+            items.push(child);
+        });
+    } catch (e) {
+        console.error("Error during loop:", e);
+    }
+
+    items.reverse();
+
+    const table = document.getElementById("LIST");
+    const tbody = table.tBodies[0];
+
+    items.forEach((child, i) => {
+        const row = tbody.rows[i];
+        row.cells[0].textContent = child.val().LostAt           ?? "";
+        row.cells[1].textContent = child.key.replace('_', ' ')                    ?? "";
+        row.cells[2].textContent = child.val().ElapsedNegative  ?? "";
+        });
+}
+
+function fill_table()   {
+	let path = get_database_path("History");
+
+    //const dataRef = ref(database, path);
+    
+	showLoading();
+
+    const N = 10;
+/**/
+    const q = query(
+        ref(database, path),
+        orderByKey(),
+        limitToLast(N)
+    );
+
+	get(q).then((snapshot) => {
+        on_table_got(snapshot);
+        });
+/**/
+/*
+const dataRef = ref(database, path); 
+
+get(dataRef).then((snapshot) => {
+        console.log("Total children found:", snapshot.size);
+        on_table_got(snapshot);
+    });
+*/
 }
