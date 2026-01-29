@@ -45,8 +45,20 @@
   width: 200px;
 }
 
-/* Force fixed row height
-#LIST tbody tr {
-  height: 48px;   / * adjust if needed * /
+#META {
+    position: absolute;      /* or fixed if you want it always visible on scroll */
+    top: 8px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-size: 12px;
+    color: #555;
+    pointer-events: none;    /* prevents interfering with clicks */
 }
- */
+
+#VERSION,
+#FIRST_RUN {
+    white-space: nowrap;
+}
