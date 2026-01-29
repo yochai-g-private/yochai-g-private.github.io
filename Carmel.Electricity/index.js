@@ -243,19 +243,54 @@ function initialize() {
         "Carmel/ElectricityWEB")
         .then((userCredential) => {
             console.log("Signed in:", userCredential.user.uid);
-            fill_table();
+			setVersion();
+			clearInterval(intervalId);
+			update();
+			fill_table();
             })
 		.catch((error) => {
 			show_error(error, 'Sign-in error');
 		});
 }
 
-initialize();
+const UI_VERSION = "A";
+const VERSION = "VERSION";
+const FIRST_RUN = "FIRST_RUN";
+
+document.getElementById(VERSION).textContent = "v" + UI_VERSION;
+document.getElementById(FIRST_RUN).textContent = "";
+
 setBackgroundColor();
 
-clearInterval(intervalId);
-update();
-fill_table();
+initialize();
+
+function setVersion()	{
+	let path = get_database_path("Current/Version");
+    const dataRef = ref(database, path);
+    
+	get(dataRef).then((snapshot) => {
+			if (!snapshot.exists()) 
+				return;
+
+			let val = snapshot.val();
+			document.getElementById(VERSION).textContent = "v" + val + "/" + UI_VERSION;
+
+			setFirstRun();
+		});
+}
+
+function setFirstRun()	{
+	let path = get_database_path("FirstRun");
+    const dataRef = ref(database, path);
+    
+	get(dataRef).then((snapshot) => {
+			if (!snapshot.exists()) 
+				return;
+
+			let val = snapshot.val();
+			document.getElementById(FIRST_RUN).textContent = val;
+		});
+}
 
 function show_balloon(id, text)	{
 	elem = document.getElementById(id);
