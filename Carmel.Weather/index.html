@@ -46,6 +46,18 @@
             border-color: #f9f9f9 transparent transparent transparent;
         }
 		
+		#META {
+			position: absolute;      /* or fixed if you want it always visible on scroll */
+			top: 8px;
+			left: 0;
+			right: 0;
+			display: flex;
+			justify-content: space-between;
+			padding: 0 12px;
+			font-size: 12px;
+			color: #555;
+			pointer-events: none;    /* prevents interfering with clicks */
+		}
     </style>
 </head> 
 
@@ -62,6 +74,12 @@
       background-color: #ffffff; /*#000000;*/ /*#f0f0f0;*/
     }
 	</style>
+
+	<div id="META">
+		<div id="VERSION"></div>
+		<div id="FIRST_RUN"></div>
+	</div>
+
 	<div style = "text-align:center;">
 		<h1 id="CARMEL" style="font-size:160px;margin-bottom: 0; opacity: 1">כרמל</h1>
 		<div class="balloon-container">
@@ -573,6 +591,38 @@
 		return now >= oneYearLater;
 	}
 
+	const UI_VERSION = "A";
+	const VERSION = "VERSION";
+	const FIRST_RUN = "FIRST_RUN";
+
+	document.getElementById(VERSION).textContent = "v" + UI_VERSION;
+	document.getElementById(FIRST_RUN).textContent = "";
+
+	function setVersion()	{
+		let path = get_database_path("Version");
+		
+		database.ref(path).once('value', function(snapshot) {
+				if (!snapshot.exists()) 
+					return;
+
+				let val = snapshot.val();
+				document.getElementById(VERSION).textContent = "v" + val + "/" + UI_VERSION;
+
+				setFirstRun();
+			});
+	}
+
+	function setFirstRun()	{
+		let path = get_database_path("FirstUpdate/LocalTime");
+		database.ref(path).once('value', function(snapshot) {
+				if (!snapshot.exists()) 
+					return;
+
+				let val = snapshot.val();
+				document.getElementById(FIRST_RUN).textContent = val;
+			});
+	}
+
   
   function initialize() {
   // Initialize Firebase with your configuration
@@ -596,6 +646,9 @@
 			// Signed in
 			const user = userCredential.user;
 			console.log('User signed in:', user);
+
+			setVersion();
+
 			// Perform actions after successful sign-in
 		})
 		.catch((error) => {
